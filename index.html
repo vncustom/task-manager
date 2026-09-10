@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager - Quản lý công việc</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header h1 {
+      font-size: 1.8em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+    }
+
+    .loading-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #667eea;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: #c0392b;
+    }
+
+    .btn-success {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #27ae60;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      padding: 0 30px;
+      gap: 5px;
+    }
+
+    .tab {
+      padding: 16px 24px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6c757d;
+      transition: all 0.2s ease;
+      border-bottom: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      background: white;
+    }
+
+    /* Content */
+    .content {
+      padding: 25px 30px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 8px 14px;
+      border: 1.5px solid #ced4da;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    /* Overdue Warning */
+    .overdue-warning {
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      animation: slideIn 0.3s ease;
+    }
+
+    .overdue-warning i {
+      font-size: 1.6em;
+      color: #e67e22;
+    }
+
+    .overdue-warning h3 {
+      font-size: 15px;
+      color: #856404;
+      margin-bottom: 2px;
+    }
+
+    .overdue-warning p {
+      font-size: 13px;
+      color: #856404;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Calendar View */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .calendar-header h2 {
+      font-size: 1.4em;
+      color: #2d3748;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .calendar-nav button {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .calendar-nav button:hover {
+      background: #5568d3;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-weight: 600;
+      padding: 12px 6px;
+      background: #667eea;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .calendar-day {
+      min-height: 120px;
+      padding: 8px;
+      background: #fdfdfd;
+      border-radius: 10px;
+      border: 2px solid #e9ecef;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-day:hover {
+      border-color: #667eea;
+      background: #f8faff;
+    }
+
+    .calendar-day.drag-over {
+      background: #eef2ff !important;
+      border-color: #667eea !important;
+      border-style: dashed !important;
+      transform: scale(1.01);
+    }
+
+    .calendar-day.today {
+      border-color: #667eea;
+      background: #f8faff;
+    }
+
+    .calendar-day.other-month {
+      background: #f8f9fa;
+      opacity: 0.6;
+    }
+
+    .calendar-day-number {
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      text-align: center;
+      border-radius: 50%;
+      font-size: 13px;
+      color: #495057;
+    }
+
+    .calendar-day.today .calendar-day-number {
+      background: #667eea;
+      color: white;
+    }
+
+    .calendar-task {
+      padding: 4px 8px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-left: 3px solid;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .calendar-task:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .calendar-task.urgent {
+      background: #ffebee;
+      border-color: #e74c3c;
+      color: #c0392b;
+    }
+
+    .calendar-task.high {
+      background: #fff3e0;
+      border-color: #e67e22;
+      color: #d35400;
+    }
+
+    .calendar-task.normal {
+      background: #e3f2fd;
+      border-color: #3498db;
+      color: #2980b9;
+    }
+
+    .calendar-task.low {
+      background: #e8f5e9;
+      border-color: #2ecc71;
+      color: #27ae60;
+    }
+
+    .calendar-task.completed {
+      background: #f1f8e9;
+      border-color: #2ecc71;
+      text-decoration: line-through;
+      opacity: 0.65;
+    }
+
+    .calendar-task.cancel, .calendar-task.cancelled {
+      background: #f5f5f5;
+      border-color: #95a5a6;
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    .calendar-task.overdue {
+      background: #ffebee;
+      border-color: #e74c3c;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+      50% { box-shadow: 0 0 0 4px rgba(231, 76, 60, 0); }
+    }
+
+    /* Kanban View */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      min-height: 550px;
+      align-items: start;
+    }
+
+    .kanban-column {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+      min-height: 450px;
+    }
+
+    .kanban-column.drag-over {
+      background: #eef2ff;
+      border-color: #667eea;
+      border-style: dashed;
+    }
+
+    .kanban-column-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .kanban-column-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kanban-column-header .count {
+      background: #667eea;
+      color: white;
+      padding: 2px 9px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .kanban-column.not-started .count { background: #9b59b6; }
+    .kanban-column.in-progress .count { background: #f39c12; }
+    .kanban-column.completed .count { background: #2ecc71; }
+    .kanban-column.cancelled .count { background: #95a5a6; }
+
+    .kanban-tasks {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 150px;
+    }
+
+    .kanban-task {
+      background: white;
+      padding: 14px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      cursor: grab;
+      transition: all 0.25s ease;
+      border-left: 4px solid #3498db;
+    }
+
+    .kanban-task:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .kanban-task.dragging {
+      opacity: 0.4;
+      transform: rotate(2deg) scale(0.98);
+    }
+
+    .kanban-task.urgent { border-left-color: #e74c3c; }
+    .kanban-task.high { border-left-color: #e67e22; }
+    .kanban-task.normal { border-left-color: #3498db; }
+    .kanban-task.low { border-left-color: #2ecc71; }
+    .kanban-task.completed { border-left-color: #2ecc71; background: #fafdfa; }
+    .kanban-task.cancel, .kanban-task.cancelled { border-left-color: #95a5a6; background: #fdfdfd; opacity: 0.75; }
+
+    .kanban-task-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #2d3748;
+      word-break: break-word;
+    }
+
+    .kanban-task-description {
+      font-size: 12px;
+      color: #6c757d;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+
+    .kanban-task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 11px;
+      color: #6c757d;
+      margin-top: 8px;
+    }
+
+    .kanban-task-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f3f5;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .kanban-task-meta .due-date.overdue {
+      color: #e74c3c;
+      background: #ffebee;
+      font-weight: 600;
+    }
+
+    .kanban-task-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #f1f3f5;
+    }
+
+    .kanban-task-actions button {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .kanban-task-actions button:hover {
+      opacity: 0.85;
+      transform: scale(1.03);
+    }
+
+    .kanban-task-actions .edit {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+
+    .kanban-task-actions .delete {
+      background: #feebc8;
+      color: #c05621;
+    }
+
+    /* Statistics View */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      padding: 22px 20px;
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.25s ease;
+      border: 1px solid #e9ecef;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-card h3 {
+      font-size: 14px;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-card .trend {
+      font-size: 12px;
+      margin-top: 6px;
+      color: #6c757d;
+    }
+
+    .stat-card .trend.positive {
+      color: #2ecc71;
+      font-weight: 600;
+    }
+
+    .stats-chart {
+      background: #f8f9fa;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border: 1px solid #e9ecef;
+    }
+
+    .stats-chart h3 {
+      margin-bottom: 18px;
+      color: #2d3748;
+      font-size: 16px;
+    }
+
+    .chart-bar-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 15px;
+    }
+
+    .chart-label {
+      width: 140px;
+      font-size: 13px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    .chart-bar {
+      flex: 1;
+      height: 24px;
+      background: #e9ecef;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.5s ease;
+    }
+
+    .chart-value {
+      width: 45px;
+      text-align: right;
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 13px;
+    }
+
+    .stats-filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      padding: 16px 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 30px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      color: #2d3748;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #a0aec0;
+      transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+      color: #e53e3e;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 7px;
+      color: #2d3748;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group .hint {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 4px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 22px;
+      background: #2d3748;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      animation: slideInRight 0.3s ease;
+      max-width: 400px;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .toast.success {
+      background: #2ecc71;
+    }
+
+    .toast.error {
+      background: #e74c3c;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .kanban-board {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-controls {
+        width: 100%;
+      }
+      .tabs {
+        padding: 0 15px;
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 14px 18px;
+        font-size: 13px;
+      }
+      .content {
+        padding: 15px;
+      }
+      .calendar-grid {
+        grid-template-columns: repeat(1, 1fr);
+      }
+      .calendar-day-header {
+        display: none;
+      }
+      .kanban-board {
+        grid-template-columns: 1fr;
+      }
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-group {
+        width: 100%;
+      }
+      .filter-group select, .filter-group input {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <h1><i class="fas fa-tasks"></i> Task Manager</h1>
+        <div id="loading-badge" class="loading-badge" style="display: none;">
+          <i class="fas fa-sync-alt fa-spin"></i> Đang tải dữ liệu...
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="btn btn-secondary" onclick="refreshData()" title="Làm mới dữ liệu từ Google Sheets">
+          <i class="fas fa-sync-alt"></i> Đồng bộ
+        </button>
+        <button class="btn btn-primary" onclick="openModal()">
+          <i class="fas fa-plus"></i> Thêm việc mới
+        </button>
+        <button class="btn btn-success" onclick="openCategoryModal()">
+          <i class="fas fa-tags"></i> Thêm loại
+        </button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('calendar', this)">
+        <i class="fas fa-calendar-alt"></i> Lịch
+      </div>
+      <div class="tab" onclick="switchTab('kanban', this)">
+        <i class="fas fa-columns"></i> Kanban
+      </div>
+      <div class="tab" onclick="switchTab('statistics', this)">
+        <i class="fas fa-chart-bar"></i> Thống kê
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Calendar View -->
+      <div id="calendar-view" class="view active">
+        <div class="filters">
+          <div class="filter-group">
+            <label for="calendar-filter-date">Xem theo:</label>
+            <select id="calendar-filter-date" onchange="renderCalendar()">
+              <option value="month" selected>Tháng này</option>
+              <option value="week">Tuần này</option>
+              <option value="today">Hôm nay</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="calendar-filter-status">Trạng thái:</label>
+            <select id="calendar-filter-status" onchange="renderCalendar()">
+              <option value="">Tất cả</option>
+              <option value="Not Started">Chưa bắt đầu</option>
+              <option value="In Progress">Đang làm</option>
+              <option value="Completed">Hoàn thành</option>
+              <option value="Cancel">Cancel</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="overdue-warning" class="overdue-warning" style="display: none;">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            <h3>Cảnh báo quá hạn!</h3>
+            <p>Bạn có <strong id="overdue-count">0</strong> công việc đã quá hạn chót.</p>
+          </div>
+        </div>
+
+        <div class="calendar-header">
+          <h2 id="calendar-title">Tháng này</h2>
+          <div class="calendar-nav">
+            <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> Tháng trước</button>
+            <button onclick="goToToday()">Hôm nay</button>
+            <button onclick="changeMonth(1)">Tháng sau <i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- Calendar will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Kanban View -->
+      <div id="kanban-view" class="view">
+        <div class="filters">
+          <div class="filter-group">
+            <label for="kanban-filter-status">Trạng thái:</label>
+            <select id="kanban-filter-status" onchange="renderKanban()">
+              <option value="">Tất cả</option>
+              <option value="Not Started">Chưa bắt đầu</option>
+              <option value="In Progress">Đang làm</option>
+              <option value="Completed">Hoàn thành</option>
+              <option value="Cancel">Cancel</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="kanban-filter-priority">Mức độ:</label>
+            <select id="kanban-filter-priority" onchange="renderKanban()">
+              <option value="">Tất cả</option>
+              <option value="Urgent">Khẩn cấp</option>
+              <option value="High">Cao</option>
+              <option value="Normal">Thường</option>
+              <option value="Low">Thấp</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="kanban-filter-category">Loại:</label>
+            <select id="kanban-filter-category" onchange="renderKanban()">
+              <option value="">Tất cả</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kanban-board" id="kanban-board">
+          <!-- Kanban columns will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Statistics View -->
+      <div id="statistics-view" class="view">
+        <div class="stats-filters">
+          <div class="filter-group">
+            <label for="stats-start-date">Từ ngày:</label>
+            <input type="date" id="stats-start-date">
+          </div>
+          <div class="filter-group">
+            <label for="stats-end-date">Đến ngày:</label>
+            <input type="date" id="stats-end-date">
+          </div>
+          <div class="filter-group">
+            <button class="btn btn-primary" onclick="loadStatistics()">
+              <i class="fas fa-filter"></i> Lọc thống kê
+            </button>
+          </div>
+          <div class="filter-group">
+            <button class="btn btn-success" onclick="exportToExcel()">
+              <i class="fas fa-file-excel"></i> Xuất Excel
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-container" id="stats-container">
+          <!-- Statistics cards will be rendered here -->
+        </div>
+
+        <div class="stats-chart" id="stats-chart">
+          <!-- Chart will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Thêm việc mới</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="task-form" onsubmit="saveTask(event)">
+        <input type="hidden" id="task-id">
+        <div class="form-group">
+          <label for="task-title">Tiêu đề *</label>
+          <input type="text" id="task-title" required placeholder="Nhập tiêu đề công việc">
+        </div>
+        <div class="form-group">
+          <label for="task-description">Mô tả</label>
+          <textarea id="task-description" placeholder="Nhập mô tả chi tiết"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-status">Trạng thái</label>
+          <select id="task-status">
+            <option value="Not Started">Chưa bắt đầu</option>
+            <option value="In Progress">Đang làm</option>
+            <option value="Completed">Hoàn thành</option>
+            <option value="Cancel">Cancel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-priority">Mức độ khẩn cấp</label>
+          <select id="task-priority">
+            <option value="Normal">Thường</option>
+            <option value="High">Cao</option>
+            <option value="Urgent">Khẩn cấp</option>
+            <option value="Low">Thấp</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-category">Loại công việc</label>
+          <select id="task-category">
+            <option value="">Chọn loại</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date">Hạn chót</label>
+          <input type="date" id="task-due-date">
+          <div class="hint">Để trống nếu không có hạn chót</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="closeModal()">Hủy</button>
+          <button type="submit" id="task-save-btn" class="btn btn-primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal" id="category-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Thêm loại công việc mới</h2>
+        <button class="modal-close" onclick="closeCategoryModal()">&times;</button>
+      </div>
+      <form id="category-form" onsubmit="saveCategory(event)">
+        <div class="form-group">
+          <label for="category-name">Tên loại *</label>
+          <input type="text" id="category-name" required placeholder="Nhập tên loại mới">
+        </div>
+        <div class="form-group">
+          <label for="category-color">Màu sắc</label>
+          <input type="color" id="category-color" value="#3498db" style="width: 100%; height: 45px; padding: 2px;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="closeCategoryModal()">Hủy</button>
+          <button type="submit" id="category-save-btn" class="btn btn-primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="fas fa-info-circle"></i>
+    <span id="toast-message"></span>
+  </div>
+
+  <script>
+    // State
+    let currentDate = new Date();
+    let tasks = [];
+    let categories = [];
+    let draggedTaskId = null;
+
+    // Check if running inside Google Apps Script web app
+    const isGoogleAppsScript = (typeof google !== 'undefined' && google.script && google.script.run);
+
+    /**
+     * Local storage mock backend for previewing in browser outside Apps Script
+     */
+    const LocalBackend = {
+      getTasks: function() {
+        return new Promise(resolve => {
+          let stored = localStorage.getItem('tm_tasks');
+          if (!stored) {
+            const initial = [
+              {
+                id: '1001',
+                title: 'Báo cáo kế hoạch Q4',
+                description: 'Tổng hợp số liệu và hoàn thiện slide báo cáo cho ban giám đốc',
+                status: 'In Progress',
+                priority: 'High',
+                category: 'Work',
+                dueDate: formatDateToYYYYMMDD(new Date()),
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: '1002',
+                title: 'Họp với khách hàng A',
+                description: 'Thảo luận hợp đồng giai đoạn 2',
+                status: 'Not Started',
+                priority: 'Urgent',
+                category: 'Work',
+                dueDate: formatDateToYYYYMMDD(new Date(Date.now() + 86400000)),
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: '1003',
+                title: 'Mua quà sinh nhật',
+                description: 'Mua quà sinh nhật cho mẹ',
+                status: 'Completed',
+                priority: 'Normal',
+                category: 'Family',
+                dueDate: formatDateToYYYYMMDD(new Date(Date.now() - 86400000)),
+                createdAt: new Date().toISOString()
+              }
+            ];
+            localStorage.setItem('tm_tasks', JSON.stringify(initial));
+            stored = JSON.stringify(initial);
+          }
+          setTimeout(() => resolve(JSON.parse(stored)), 100);
+        });
+      },
+      addTask: function(task) {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_tasks') || '[]');
+          const newTask = {
+            ...task,
+            id: 'local_' + Date.now(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          list.push(newTask);
+          localStorage.setItem('tm_tasks', JSON.stringify(list));
+          setTimeout(() => resolve(newTask), 100);
+        });
+      },
+      updateTask: function(id, updates) {
+        return new Promise((resolve, reject) => {
+          const list = JSON.parse(localStorage.getItem('tm_tasks') || '[]');
+          const index = list.findIndex(t => String(t.id) === String(id));
+          if (index === -1) return reject(new Error('Task không tồn tại'));
+          list[index] = { ...list[index], ...updates, updatedAt: new Date().toISOString() };
+          localStorage.setItem('tm_tasks', JSON.stringify(list));
+          setTimeout(() => resolve(list[index]), 100);
+        });
+      },
+      deleteTask: function(id) {
+        return new Promise(resolve => {
+          let list = JSON.parse(localStorage.getItem('tm_tasks') || '[]');
+          list = list.filter(t => String(t.id) !== String(id));
+          localStorage.setItem('tm_tasks', JSON.stringify(list));
+          setTimeout(() => resolve(true), 100);
+        });
+      },
+      getCategoriesFromSheet: function() {
+        return new Promise(resolve => {
+          let stored = localStorage.getItem('tm_categories');
+          if (!stored) {
+            const defaultCats = [
+              { value: 'Work', label: 'Work', color: '#3498db' },
+              { value: 'Personal', label: 'Personal', color: '#9b59b6' },
+              { value: 'Family', label: 'Family', color: '#e91e63' },
+              { value: 'Project', label: 'Project', color: '#f39c12' }
+            ];
+            localStorage.setItem('tm_categories', JSON.stringify(defaultCats));
+            stored = JSON.stringify(defaultCats);
+          }
+          setTimeout(() => resolve(JSON.parse(stored)), 50);
+        });
+      },
+      addCategory: function(cat) {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_categories') || '[]');
+          list.push({ value: cat.name, label: cat.name, color: cat.color || '#3498db' });
+          localStorage.setItem('tm_categories', JSON.stringify(list));
+          setTimeout(() => resolve(list), 50);
+        });
+      },
+      getStatistics: function(startDate, endDate) {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_tasks') || '[]');
+          const total = list.length;
+          const completed = list.filter(t => t.status === 'Completed').length;
+          const inProgress = list.filter(t => t.status === 'In Progress').length;
+          const notStarted = list.filter(t => t.status === 'Not Started').length;
+          const cancelled = list.filter(t => t.status === 'Cancel').length;
+          const byPriority = {
+            Urgent: list.filter(t => t.priority === 'Urgent').length,
+            High: list.filter(t => t.priority === 'High').length,
+            Normal: list.filter(t => t.priority === 'Normal').length,
+            Low: list.filter(t => t.priority === 'Low').length
+          };
+          const byCategory = {};
+          list.forEach(t => {
+            const c = t.category || 'Khác';
+            byCategory[c] = (byCategory[c] || 0) + 1;
+          });
+          const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+          setTimeout(() => resolve({
+            total, completed, inProgress, notStarted, cancelled,
+            byPriority, byCategory, completionRate: rate
+          }), 100);
+        });
+      },
+      exportToExcel: function() {
+        return new Promise(resolve => {
+          setTimeout(() => resolve('https://docs.google.com/spreadsheets'), 200);
+        });
+      }
+    };
+
+    /**
+     * Date Formatting Utilities
+     */
+    // Format Date object or string to local 'YYYY-MM-DD' without timezone drift
+    function formatDateToYYYYMMDD(d) {
+      if (!d) return '';
+      if (typeof d === 'string') {
+        const trimmed = d.trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+        // Check if ISO string or date string
+        const parsed = new Date(trimmed);
+        if (isNaN(parsed.getTime())) return '';
+        d = parsed;
+      }
+      if (d instanceof Date && !isNaN(d.getTime())) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    }
+
+    // Get clean YYYY-MM-DD from task.dueDate
+    function getTaskDueDateStr(dueDate) {
+      if (!dueDate) return '';
+      return formatDateToYYYYMMDD(dueDate);
+    }
+
+    // Parse string to Date safely in local time
+    function parseLocalDate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+      const str = String(val).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        const parts = str.split('-').map(Number);
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+      }
+      const d = new Date(str);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    // Format date for display in Vietnamese format: DD/MM/YYYY
+    function formatDate(dateVal) {
+      if (!dateVal) return '';
+      const d = parseLocalDate(dateVal);
+      if (!d) return String(dateVal);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    // Today in YYYY-MM-DD
+    function getTodayDateStr() {
+      return formatDateToYYYYMMDD(new Date());
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // UI Loading Indicator
+    function showLoading(isLoading) {
+      const badge = document.getElementById('loading-badge');
+      if (badge) {
+        badge.style.display = isLoading ? 'inline-flex' : 'none';
+      }
+    }
+
+    // Initialize App
+    document.addEventListener('DOMContentLoaded', async function() {
+      setDefaultDateRange();
+      renderCalendar();
+      renderKanban();
+      await refreshData();
+    });
+
+    async function refreshData() {
+      showLoading(true);
+      try {
+        await Promise.all([loadTasks(), loadCategories()]);
+      } catch (e) {
+        console.error('Lỗi tải dữ liệu ban đầu:', e);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load tasks
+    function loadTasks() {
+      return new Promise((resolve, reject) => {
+        showLoading(true);
+        if (isGoogleAppsScript) {
+          google.script.run
+            .withSuccessHandler(function(data) {
+              tasks = Array.isArray(data) ? data : [];
+              renderCalendar();
+              renderKanban();
+              checkOverdue();
+              showLoading(false);
+              resolve(tasks);
+            })
+            .withFailureHandler(function(error) {
+              showLoading(false);
+              console.error('Lỗi khi tải tasks từ Google Sheet:', error);
+              showToast('Lỗi tải Google Sheet: ' + (error.message || error), 'error');
+              reject(error);
+            })
+            .getTasks();
+        } else {
+          LocalBackend.getTasks()
+            .then(data => {
+              tasks = data;
+              renderCalendar();
+              renderKanban();
+              checkOverdue();
+              showLoading(false);
+              resolve(tasks);
+            })
+            .catch(err => {
+              showLoading(false);
+              reject(err);
+            });
+        }
+      });
+    }
+
+    // Load categories
+    function loadCategories() {
+      return new Promise((resolve, reject) => {
+        if (isGoogleAppsScript) {
+          google.script.run
+            .withSuccessHandler(function(data) {
+              categories = Array.isArray(data) ? data : [];
+              updateCategorySelects();
+              resolve(categories);
+            })
+            .withFailureHandler(function(error) {
+              console.error('Lỗi tải categories:', error);
+              reject(error);
+            })
+            .getCategoriesFromSheet();
+        } else {
+          LocalBackend.getCategoriesFromSheet()
+            .then(data => {
+              categories = data;
+              updateCategorySelects();
+              resolve(categories);
+            })
+            .catch(reject);
+        }
+      });
+    }
+
+    // Update category dropdown selects
+    function updateCategorySelects() {
+      const kanbanFilter = document.getElementById('kanban-filter-category');
+      const taskCategory = document.getElementById('task-category');
+      
+      const options = categories.map(cat => 
+        `<option value="${escapeHtml(cat.value)}">${escapeHtml(cat.label)}</option>`
+      ).join('');
+      
+      kanbanFilter.innerHTML = '<option value="">Tất cả</option>' + options;
+      taskCategory.innerHTML = '<option value="">Chọn loại</option>' + options;
+    }
+
+    // Switch view tabs
+    function switchTab(tab, tabElement) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      
+      if (tabElement) {
+        tabElement.classList.add('active');
+      } else {
+        const target = document.querySelector(`.tab[onclick*="'${tab}'"]`);
+        if (target) target.classList.add('active');
+      }
+      
+      const viewEl = document.getElementById(tab + '-view');
+      if (viewEl) viewEl.classList.add('active');
+      
+      if (tab === 'calendar') {
+        renderCalendar();
+      } else if (tab === 'kanban') {
+        renderKanban();
+      } else if (tab === 'statistics') {
+        loadStatistics();
+      }
+    }
+
+    // Calendar functions
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      if (!grid) return;
+
+      const filterDate = document.getElementById('calendar-filter-date').value;
+      const filterStatus = document.getElementById('calendar-filter-status').value;
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = getTodayDateStr();
+
+      let startDate, endDate;
+      switch(filterDate) {
+        case 'today':
+          startDate = new Date(today);
+          endDate = new Date(today);
+          break;
+        case 'week':
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - today.getDay());
+          endDate = new Date(startDate);
+          endDate.setDate(endDate.getDate() + 6);
+          break;
+        case 'month':
+        default:
+          startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+          break;
+      }
+      
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+      const totalDays = lastDay.getDate();
+      
+      // Update title
+      const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                         'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+      document.getElementById('calendar-title').textContent = `${monthNames[month]} ${year}`;
+      
+      // Render day headers
+      const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+      let html = dayNames.map(d => `<div class="calendar-day-header">${d}</div>`).join('');
+      
+      // Render empty cells before first day
+      for (let i = 0; i < startDay; i++) {
+        html += '<div class="calendar-day other-month"></div>';
+      }
+      
+      // Render each day of the month
+      for (let day = 1; day <= totalDays; day++) {
+        const dayDate = new Date(year, month, day);
+        const dateStr = formatDateToYYYYMMDD(dayDate);
+        const isToday = (dateStr === todayStr);
+        const isOtherMonth = (filterDate !== 'month' && (dayDate < startDate || dayDate > endDate));
+        
+        // Filter tasks for this day with status filter applied
+        const dayTasks = tasks.filter(t => {
+          if (filterStatus && t.status !== filterStatus) return false;
+          return getTaskDueDateStr(t.dueDate) === dateStr;
+        });
+        
+        let tasksHtml = dayTasks.map(task => {
+          const priorityClass = (task.priority || 'Normal').toLowerCase();
+          const statusClass = (task.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
+          const isOverdue = task.dueDate && getTaskDueDateStr(task.dueDate) < todayStr && task.status !== 'Completed' && task.status !== 'Cancel';
+          
+          return `<div class="calendar-task ${priorityClass} ${statusClass} ${isOverdue ? 'overdue' : ''}" 
+                   draggable="true" 
+                   ondragstart="handleDragStart(event, '${task.id}')"
+                   onclick="event.stopPropagation(); editTask('${task.id}')"
+                   title="${escapeHtml(task.title)}">
+                   ${escapeHtml(task.title)}
+                  </div>`;
+        }).join('');
+        
+        html += `
+          <div class="calendar-day ${isToday ? 'today' : ''} ${isOtherMonth ? 'other-month' : ''}" 
+               onclick="openModalForDate('${dateStr}')"
+               ondragover="handleDragOver(event)"
+               ondragenter="handleDragEnter(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleCalendarDrop(event, '${dateStr}')">
+            <span class="calendar-day-number">${day}</span>
+            ${tasksHtml}
+          </div>
+        `;
+      }
+      
+      grid.innerHTML = html;
+    }
+
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function goToToday() {
+      currentDate = new Date();
+      renderCalendar();
+    }
+
+    // Kanban functions
+    function renderKanban() {
+      const board = document.getElementById('kanban-board');
+      if (!board) return;
+
+      const filterStatus = document.getElementById('kanban-filter-status').value;
+      const filterPriority = document.getElementById('kanban-filter-priority').value;
+      const filterCategory = document.getElementById('kanban-filter-category').value;
+      
+      // Filter tasks
+      let filteredTasks = tasks.filter(task => {
+        if (filterStatus && task.status !== filterStatus) return false;
+        if (filterPriority && task.priority !== filterPriority) return false;
+        if (filterCategory && task.category !== filterCategory) return false;
+        return true;
+      });
+      
+      const statuses = ['Not Started', 'In Progress', 'Completed', 'Cancel'];
+      const statusLabels = {
+        'Not Started': { label: 'Chưa bắt đầu', class: 'not-started' },
+        'In Progress': { label: 'Đang làm', class: 'in-progress' },
+        'Completed': { label: 'Hoàn thành', class: 'completed' },
+        'Cancel': { label: 'Cancel', class: 'cancelled' }
+      };
+      
+      let html = statuses.map(status => {
+        const statusTasks = filteredTasks.filter(t => t.status === status);
+        const statusInfo = statusLabels[status];
+        
+        return `
+          <div class="kanban-column ${statusInfo.class}" 
+               ondragover="handleDragOver(event)"
+               ondragenter="handleDragEnter(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleKanbanDrop(event, '${status}')">
+            <div class="kanban-column-header">
+              <h3><i class="fas fa-tasks"></i> ${statusInfo.label}</h3>
+              <span class="count">${statusTasks.length}</span>
+            </div>
+            <div class="kanban-tasks">
+              ${statusTasks.map(task => renderKanbanTask(task)).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      board.innerHTML = html;
+    }
+
+    function renderKanbanTask(task) {
+      const todayStr = getTodayDateStr();
+      const dueStr = getTaskDueDateStr(task.dueDate);
+      const isOverdue = dueStr && dueStr < todayStr && task.status !== 'Completed' && task.status !== 'Cancel';
+      
+      const priorityClass = (task.priority || 'Normal').toLowerCase();
+      const statusClass = (task.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
+      
+      return `
+        <div class="kanban-task ${priorityClass} ${statusClass}" 
+             draggable="true" 
+             ondragstart="handleDragStart(event, '${task.id}')"
+             onclick="editTask('${task.id}')">
+          <div class="kanban-task-title">${escapeHtml(task.title)}</div>
+          ${task.description ? `<div class="kanban-task-description">${escapeHtml(task.description)}</div>` : ''}
+          <div class="kanban-task-meta">
+            <span class="priority">
+              <i class="fas fa-flag"></i> ${escapeHtml(task.priority || 'Normal')}
+            </span>
+            <span class="category">
+              <i class="fas fa-tag"></i> ${escapeHtml(task.category || 'Personal')}
+            </span>
+            <span class="due-date ${isOverdue ? 'overdue' : ''}">
+              <i class="fas fa-clock"></i> ${task.dueDate ? formatDate(task.dueDate) : 'Không có hạn'}
+            </span>
+          </div>
+          <div class="kanban-task-actions">
+            <button class="edit" onclick="event.stopPropagation(); editTask('${task.id}')">
+              <i class="fas fa-edit"></i> Sửa
+            </button>
+            <button class="delete" onclick="event.stopPropagation(); deleteTask('${task.id}')">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Drag and Drop
+    function handleDragStart(event, taskId) {
+      draggedTaskId = taskId;
+      event.target.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', taskId);
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDragEnter(event) {
+      event.preventDefault();
+      event.currentTarget?.classList.add('drag-over');
+    }
+
+    function handleDragLeave(event) {
+      event.currentTarget?.classList.remove('drag-over');
+    }
+
+    // Drag & drop onto Kanban column: update status
+    async function handleKanbanDrop(event, newStatus) {
+      event.preventDefault();
+      event.currentTarget?.classList.remove('drag-over');
+      document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+      
+      if (!draggedTaskId) return;
+      const taskId = draggedTaskId;
+      draggedTaskId = null;
+      
+      const task = tasks.find(t => String(t.id) === String(taskId));
+      if (task && task.status !== newStatus) {
+        const oldStatus = task.status;
+        task.status = newStatus;
+        renderKanban();
+        renderCalendar();
+        checkOverdue();
+        
+        try {
+          await updateTask(taskId, { status: newStatus });
+          showToast('Cập nhật trạng thái thành công!', 'success');
+        } catch (err) {
+          task.status = oldStatus;
+          renderKanban();
+          renderCalendar();
+          showToast('Lỗi cập nhật: ' + (err.message || err), 'error');
+        }
+      }
+    }
+
+    // Drag & drop onto Calendar day: update dueDate
+    async function handleCalendarDrop(event, targetDateStr) {
+      event.preventDefault();
+      event.currentTarget?.classList.remove('drag-over');
+      document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+      
+      if (!draggedTaskId) return;
+      const taskId = draggedTaskId;
+      draggedTaskId = null;
+      
+      const task = tasks.find(t => String(t.id) === String(taskId));
+      if (task && getTaskDueDateStr(task.dueDate) !== targetDateStr) {
+        const oldDueDate = task.dueDate;
+        task.dueDate = targetDateStr;
+        renderCalendar();
+        renderKanban();
+        checkOverdue();
+        
+        try {
+          await updateTask(taskId, { dueDate: targetDateStr });
+          showToast('Đã dời hạn chót sang ' + formatDate(targetDateStr) + '!', 'success');
+        } catch (err) {
+          task.dueDate = oldDueDate;
+          renderCalendar();
+          renderKanban();
+          showToast('Lỗi cập nhật hạn chót: ' + (err.message || err), 'error');
+        }
+      }
+    }
+
+    // Modal functions
+    function openModal() {
+      document.getElementById('task-form').reset();
+      document.getElementById('task-id').value = '';
+      document.getElementById('modal-title').textContent = 'Thêm việc mới';
+      document.getElementById('task-modal').classList.add('active');
+    }
+
+    function openModalForDate(dateStr) {
+      openModal();
+      document.getElementById('task-due-date').value = dateStr;
+    }
+
+    function closeModal() {
+      document.getElementById('task-modal').classList.remove('active');
+    }
+
+    function editTask(taskId) {
+      const task = tasks.find(t => String(t.id) === String(taskId));
+      if (!task) return;
+      
+      document.getElementById('task-id').value = task.id;
+      document.getElementById('task-title').value = task.title;
+      document.getElementById('task-description').value = task.description || '';
+      document.getElementById('task-status').value = task.status || 'Not Started';
+      document.getElementById('task-priority').value = task.priority || 'Normal';
+      document.getElementById('task-category').value = task.category || '';
+      document.getElementById('task-due-date').value = getTaskDueDateStr(task.dueDate);
+      document.getElementById('modal-title').textContent = 'Sửa việc';
+      document.getElementById('task-modal').classList.add('active');
+    }
+
+    async function saveTask(event) {
+      event.preventDefault();
+      
+      const saveBtn = document.getElementById('task-save-btn');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+      
+      const taskId = document.getElementById('task-id').value;
+      const taskData = {
+        title: document.getElementById('task-title').value.trim(),
+        description: document.getElementById('task-description').value.trim(),
+        status: document.getElementById('task-status').value,
+        priority: document.getElementById('task-priority').value,
+        category: document.getElementById('task-category').value,
+        dueDate: document.getElementById('task-due-date').value || ''
+      };
+      
+      try {
+        if (taskId) {
+          await updateTask(taskId, taskData);
+          showToast('Cập nhật thành công!', 'success');
+        } else {
+          await addTask(taskData);
+          showToast('Thêm công việc thành công!', 'success');
+        }
+        closeModal();
+        await loadTasks();
+      } catch (err) {
+        console.error('Lỗi khi lưu task:', err);
+        showToast('Lỗi: ' + (err.message || err), 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+      }
+    }
+
+    async function deleteTask(taskId) {
+      if (confirm('Bạn có chắc muốn xóa công việc này không?')) {
+        try {
+          showLoading(true);
+          await new Promise((resolve, reject) => {
+            if (isGoogleAppsScript) {
+              google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(reject)
+                .deleteTask(taskId);
+            } else {
+              LocalBackend.deleteTask(taskId).then(resolve).catch(reject);
+            }
+          });
+          showToast('Xóa thành công!', 'success');
+          await loadTasks();
+        } catch (err) {
+          console.error('Lỗi xóa task:', err);
+          showToast('Lỗi xóa: ' + (err.message || err), 'error');
+        } finally {
+          showLoading(false);
+        }
+      }
+    }
+
+    // Category Modal functions
+    function openCategoryModal() {
+      document.getElementById('category-form').reset();
+      document.getElementById('category-color').value = '#3498db';
+      document.getElementById('category-modal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('category-modal').classList.remove('active');
+    }
+
+    async function saveCategory(event) {
+      event.preventDefault();
+      const saveBtn = document.getElementById('category-save-btn');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
+      
+      const category = {
+        name: document.getElementById('category-name').value.trim(),
+        color: document.getElementById('category-color').value
+      };
+      
+      try {
+        const updatedCategories = await new Promise((resolve, reject) => {
+          if (isGoogleAppsScript) {
+            google.script.run
+              .withSuccessHandler(resolve)
+              .withFailureHandler(reject)
+              .addCategory(category);
+          } else {
+            LocalBackend.addCategory(category).then(resolve).catch(reject);
+          }
+        });
+        
+        showToast('Thêm loại thành công!', 'success');
+        closeCategoryModal();
+        categories = updatedCategories || [];
+        updateCategorySelects();
+        renderKanban();
+      } catch (err) {
+        showToast(err.message || err, 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+      }
+    }
+
+    // Task API wrappers returning Promises
+    function addTask(task) {
+      return new Promise((resolve, reject) => {
+        if (isGoogleAppsScript) {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            .addTask(task);
+        } else {
+          LocalBackend.addTask(task).then(resolve).catch(reject);
+        }
+      });
+    }
+
+    function updateTask(taskId, updates) {
+      return new Promise((resolve, reject) => {
+        if (isGoogleAppsScript) {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            .updateTask(taskId, updates);
+        } else {
+          LocalBackend.updateTask(taskId, updates).then(resolve).catch(reject);
+        }
+      });
+    }
+
+    // Overdue check
+    function checkOverdue() {
+      const todayStr = getTodayDateStr();
+      const overdueTasks = tasks.filter(task => {
+        if (!task.dueDate) return false;
+        const dueStr = getTaskDueDateStr(task.dueDate);
+        return dueStr && dueStr < todayStr && task.status !== 'Completed' && task.status !== 'Cancel';
+      });
+      
+      const warning = document.getElementById('overdue-warning');
+      if (warning) {
+        if (overdueTasks.length > 0) {
+          warning.style.display = 'flex';
+          const countEl = document.getElementById('overdue-count');
+          if (countEl) countEl.textContent = overdueTasks.length;
+        } else {
+          warning.style.display = 'none';
+        }
+      }
+    }
+
+    // Statistics functions
+    function setDefaultDateRange() {
+      const today = new Date();
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      
+      document.getElementById('stats-start-date').value = formatDateToYYYYMMDD(thirtyDaysAgo);
+      document.getElementById('stats-end-date').value = formatDateToYYYYMMDD(today);
+    }
+
+    function loadStatistics() {
+      const startDate = document.getElementById('stats-start-date').value;
+      const endDate = document.getElementById('stats-end-date').value;
+      
+      if (!startDate || !endDate) {
+        showToast('Vui lòng chọn khoảng thời gian!', 'error');
+        return;
+      }
+      
+      showLoading(true);
+      if (isGoogleAppsScript) {
+        google.script.run
+          .withSuccessHandler(function(stats) {
+            renderStatistics(stats);
+            showLoading(false);
+          })
+          .withFailureHandler(function(err) {
+            showLoading(false);
+            showToast('Lỗi tính thống kê: ' + (err.message || err), 'error');
+          })
+          .getStatistics(startDate, endDate);
+      } else {
+        LocalBackend.getStatistics(startDate, endDate)
+          .then(stats => {
+            renderStatistics(stats);
+            showLoading(false);
+          })
+          .catch(err => {
+            showLoading(false);
+            showToast(err.message, 'error');
+          });
+      }
+    }
+
+    function renderStatistics(stats) {
+      const container = document.getElementById('stats-container');
+      const chart = document.getElementById('stats-chart');
+      if (!container || !chart || !stats) return;
+      
+      // Render stat cards
+      container.innerHTML = `
+        <div class="stat-card">
+          <h3>Tổng công việc</h3>
+          <div class="value">${stats.total}</div>
+          <div class="trend">Tất cả trong giai đoạn</div>
+        </div>
+        <div class="stat-card">
+          <h3>Hoàn thành</h3>
+          <div class="value" style="color: #2ecc71;">${stats.completed}</div>
+          <div class="trend positive">${stats.completionRate}% hoàn thành</div>
+        </div>
+        <div class="stat-card">
+          <h3>Đang làm</h3>
+          <div class="value" style="color: #f39c12;">${stats.inProgress}</div>
+          <div class="trend">Đang thực hiện</div>
+        </div>
+        <div class="stat-card">
+          <h3>Chưa bắt đầu</h3>
+          <div class="value" style="color: #9b59b6;">${stats.notStarted}</div>
+          <div class="trend">Chờ bắt đầu</div>
+        </div>
+      `;
+      
+      // Render priority chart
+      let chartHtml = '<h3>Phân bố theo mức độ khẩn cấp</h3>';
+      const maxPriority = Math.max(
+        stats.byPriority?.Urgent || 0,
+        stats.byPriority?.High || 0,
+        stats.byPriority?.Normal || 0,
+        stats.byPriority?.Low || 0,
+        1
+      );
+      
+      const priorityLabels = {
+        'Urgent': 'Khẩn cấp',
+        'High': 'Cao',
+        'Normal': 'Thường',
+        'Low': 'Thấp'
+      };
+      
+      if (stats.byPriority) {
+        for (const [key, value] of Object.entries(stats.byPriority)) {
+          const percentage = (value / maxPriority) * 100;
+          chartHtml += `
+            <div class="chart-bar-container">
+              <div class="chart-label">${priorityLabels[key] || key}</div>
+              <div class="chart-bar">
+                <div class="chart-bar-fill" style="width: ${percentage}%; background: ${getPriorityColor(key)};"></div>
+              </div>
+              <div class="chart-value">${value}</div>
+            </div>
+          `;
+        }
+      }
+      
+      // Category chart
+      chartHtml += '<h3 style="margin-top: 30px;">Phân bố theo loại công việc</h3>';
+      const catValues = Object.values(stats.byCategory || {});
+      const maxCategory = catValues.length > 0 ? Math.max(...catValues, 1) : 1;
+      
+      if (stats.byCategory && Object.keys(stats.byCategory).length > 0) {
+        for (const [key, value] of Object.entries(stats.byCategory)) {
+          const percentage = (value / maxCategory) * 100;
+          const color = getCategoryColor(key);
+          chartHtml += `
+            <div class="chart-bar-container">
+              <div class="chart-label">${escapeHtml(key)}</div>
+              <div class="chart-bar">
+                <div class="chart-bar-fill" style="width: ${percentage}%; background: ${color};"></div>
+              </div>
+              <div class="chart-value">${value}</div>
+            </div>
+          `;
+        }
+      } else {
+        chartHtml += '<p style="color: #6c757d; font-size: 13px;">Chưa có dữ liệu loại công việc.</p>';
+      }
+      
+      chart.innerHTML = chartHtml;
+    }
+
+    function getPriorityColor(priority) {
+      const colors = {
+        'Urgent': '#e74c3c',
+        'High': '#e67e22',
+        'Normal': '#3498db',
+        'Low': '#2ecc71'
+      };
+      return colors[priority] || '#3498db';
+    }
+
+    function getCategoryColor(category) {
+      const cat = categories.find(c => c.value === category);
+      return cat ? cat.color : '#3498db';
+    }
+
+    function exportToExcel() {
+      const startDate = document.getElementById('stats-start-date').value;
+      const endDate = document.getElementById('stats-end-date').value;
+      
+      if (!startDate || !endDate) {
+        showToast('Vui lòng chọn khoảng thời gian!', 'error');
+        return;
+      }
+      
+      showToast('Đang tạo file Excel...', 'success');
+      if (isGoogleAppsScript) {
+        google.script.run
+          .withSuccessHandler(function(url) {
+            window.open(url, '_blank');
+            showToast('Đã xuất Excel thành công!', 'success');
+          })
+          .withFailureHandler(function(err) {
+            showToast('Lỗi xuất Excel: ' + (err.message || err), 'error');
+          })
+          .exportToExcel(startDate, endDate);
+      } else {
+        LocalBackend.exportToExcel().then(url => {
+          showToast('Mock: Đã tạo file export (' + url + ')', 'success');
+        });
+      }
+    }
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-message');
+      if (!toast || !msgEl) return;
+      
+      msgEl.textContent = message;
+      toast.className = `toast show ${type}`;
+      
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => {
+        toast.className = 'toast';
+      }, 3500);
+    }
+
+    // Close modals on outside click
+    document.getElementById('task-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById('category-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeCategoryModal();
+    });
+  </script>
+</body>
+</html>
