@@ -85,6 +85,13 @@ Sheet "Tasks" sẽ tự động được tạo với các cột:
 |----|-------|-------------|--------|----------|----------|---------|-------------|-----------|-----------|
 | UUID | Tiêu đề | Mô tả | Not Started/In Progress/Completed/Cancel | Urgent/High/Normal/Low | Work/Personal/Family/Project | YYYY-MM-DD | YYYY-MM-DD HH:MM:SS | YYYY-MM-DD HH:MM:SS | YYYY-MM-DD HH:MM:SS |
 
+Ba sheet phụ cũng tự động được tạo khi cần:
+- **Subtasks**: `ID | TaskID | Title | Completed | CreatedAt | UpdatedAt`
+- **Templates**: `ID | Name | Title | Description | Priority | Category`
+- **Categories**: `Category | Color` (đã có từ trước)
+
+Cài đặt nhắc nhở email (bật/tắt, số ngày nhắc trước) được lưu trong Script Properties của Apps Script, không nằm trong Sheet.
+
 ## 🎨 Giao diện
 
 ### Màu sắc theo mức độ khẩn cấp
@@ -166,17 +173,21 @@ Nếu gặp vấn đề, hãy:
 2. Xem lại các bước cài đặt
 3. Đảm bảo đã deploy webapp thành công
 
+## 🆕 Tính năng mới
+
+- **Reminder notifications**: Thông báo trình duyệt (khi tab đang mở) + email nhắc nhở hàng ngày qua Google Apps Script trigger (cấu hình trong nút "Nhắc nhở" trên header).
+- **Subtasks**: Thêm công việc con bên trong mỗi task, theo dõi tiến độ (x/y hoàn thành), hiển thị badge trên thẻ Kanban.
+- **Search functionality**: Ô tìm kiếm trên header, lọc theo tiêu đề/mô tả, không phân biệt dấu tiếng Việt.
+- **Task templates**: Lưu một công việc thành mẫu ("Lưu thành mẫu" trong form), tái sử dụng khi tạo việc mới, quản lý trong nút "Mẫu".
+- **Statistics and reports**: Thêm thẻ "Quá hạn"/"Đã hủy" và biểu đồ xu hướng hoàn thành theo tuần.
+
 ## 🎯 Tương lai
 
 Các tính năng có thể thêm:
-- [ ] Reminder notifications
-- [ ] Subtasks
-- [ ] Search functionality
 - [ ] Export to CSV
 - [ ] Dark mode
 - [ ] Multiple users support
-- [ ] Task templates
-- [ ] Statistics and reports
+- [ ] Recurring tasks
 
 ---
 

@@ -7,9 +7,17 @@
 const SHEET_NAME = 'Tasks';
 const CATEGORIES_SHEET = 'Categories';
 const COLUMNS = [
-  'ID', 'Title', 'Description', 'Status', 'Priority', 
+  'ID', 'Title', 'Description', 'Status', 'Priority',
   'Category', 'DueDate', 'CompletedAt', 'CreatedAt', 'UpdatedAt'
 ];
+
+const SUBTASKS_SHEET = 'Subtasks';
+const SUBTASK_COLUMNS = ['ID', 'TaskID', 'Title', 'Completed', 'CreatedAt', 'UpdatedAt'];
+
+const TEMPLATES_SHEET = 'Templates';
+const TEMPLATE_COLUMNS = ['ID', 'Name', 'Title', 'Description', 'Priority', 'Category'];
+
+const REMINDER_TRIGGER_HANDLER = 'sendDueReminders';
 
 // Initialize
 function doGet(e) {
@@ -238,6 +246,7 @@ function deleteTask(id) {
     for (let i = 1; i < data.length; i++) {
       if (String(data[i][0]) === String(id)) {
         sheet.deleteRow(i + 1);
+        deleteSubtasksForTask(id);
         Logger.log('Task deleted successfully: ' + id);
         return true;
       }
@@ -474,17 +483,36 @@ function getStatistics(startDate, endDate) {
       const cat = task.category || 'Khác';
       byCategory[cat] = (byCategory[cat] || 0) + 1;
     });
-    
+
+    const todayStr = getTodayString();
+    const overdue = filteredTasks.filter(t =>
+      t.status !== 'Completed' && t.status !== 'Cancel' && t.dueDate && t.dueDate < todayStr
+    ).length;
+
+    // Weekly completion trend: bucket completed tasks by the week (Sunday) their completedAt falls in
+    const byWeek = {};
+    filteredTasks.forEach(task => {
+      if (task.status !== 'Completed' || !task.completedAt) return;
+      const d = new Date(task.completedAt);
+      if (isNaN(d.getTime())) return;
+      const weekStart = new Date(d);
+      weekStart.setDate(d.getDate() - d.getDay());
+      const label = formatDateToString(weekStart);
+      byWeek[label] = (byWeek[label] || 0) + 1;
+    });
+
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
+
     return {
       total,
       completed,
       inProgress,
       notStarted,
       cancelled,
+      overdue,
       byPriority,
       byCategory,
+      byWeek,
       completionRate
     };
   } catch (error) {
@@ -543,5 +571,343 @@ function exportToExcel(startDate, endDate) {
   } catch (error) {
     Logger.log('Error exporting: ' + error.toString());
     throw new Error('Lỗi khi xuất file Excel: ' + error.message);
+  }
+}
+
+// ============================================================
+// SUBTASKS
+// ============================================================
+
+function getSubtasksSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('Không thể kết nối với Google Sheet.');
+  }
+  let sheet = ss.getSheetByName(SUBTASKS_SHEET);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SUBTASKS_SHEET);
+    sheet.appendRow(SUBTASK_COLUMNS);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, SUBTASK_COLUMNS.length).setFontWeight('bold').setBackground('#667eea').setFontColor('#ffffff');
+    sheet.setColumnWidth(1, 80);
+    sheet.setColumnWidth(2, 80);
+    sheet.setColumnWidth(3, 250);
+  }
+
+  return sheet;
+}
+
+// Get all subtasks (bulk load, used for progress badges on task cards)
+function getAllSubtasks() {
+  try {
+    const sheet = getSubtasksSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return [];
+
+    const data = sheet.getRange(2, 1, lastRow - 1, SUBTASK_COLUMNS.length).getValues();
+    const result = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const id = row[0] ? String(row[0]).trim() : '';
+      if (!id) continue;
+
+      result.push({
+        id: id,
+        taskId: String(row[1] || ''),
+        title: String(row[2] || ''),
+        completed: row[3] === true || String(row[3]).toLowerCase() === 'true',
+        createdAt: formatTimestampToString(row[4]),
+        updatedAt: formatTimestampToString(row[5])
+      });
+    }
+
+    return result;
+  } catch (error) {
+    Logger.log('Error in getAllSubtasks: ' + error.toString());
+    throw new Error('Không thể tải danh sách công việc con: ' + error.message);
+  }
+}
+
+// Get subtasks belonging to one task
+function getSubtasksByTask(taskId) {
+  return getAllSubtasks().filter(s => s.taskId === String(taskId));
+}
+
+// Add a subtask
+function addSubtask(taskId, title) {
+  try {
+    if (!title || !String(title).trim()) {
+      throw new Error('Tiêu đề công việc con không được để trống');
+    }
+    const sheet = getSubtasksSheet();
+    const id = Utilities.getUuid();
+    const now = new Date().toISOString();
+    sheet.appendRow([id, String(taskId), String(title).trim(), false, now, now]);
+    return getSubtasksByTask(taskId);
+  } catch (error) {
+    Logger.log('Error adding subtask: ' + error.toString());
+    throw new Error('Lỗi khi thêm công việc con: ' + error.message);
+  }
+}
+
+// Update a subtask (title and/or completed)
+function updateSubtask(id, updates) {
+  try {
+    const sheet = getSubtasksSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) {
+      throw new Error('Không tìm thấy công việc con');
+    }
+
+    const data = sheet.getRange(2, 1, lastRow - 1, SUBTASK_COLUMNS.length).getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (String(data[i][0]) === String(id)) {
+        const row = data[i];
+        if (updates.title !== undefined) row[2] = String(updates.title).trim();
+        if (updates.completed !== undefined) row[3] = !!updates.completed;
+        row[5] = new Date().toISOString();
+
+        sheet.getRange(i + 2, 1, 1, row.length).setValues([row]);
+        return getSubtasksByTask(row[1]);
+      }
+    }
+
+    throw new Error('Không tìm thấy công việc con với ID: ' + id);
+  } catch (error) {
+    Logger.log('Error updating subtask: ' + error.toString());
+    throw new Error('Lỗi khi cập nhật công việc con: ' + error.message);
+  }
+}
+
+// Delete a subtask
+function deleteSubtask(id) {
+  try {
+    const sheet = getSubtasksSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) {
+      throw new Error('Không tìm thấy công việc con để xóa');
+    }
+
+    const data = sheet.getRange(2, 1, lastRow - 1, 2).getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (String(data[i][0]) === String(id)) {
+        sheet.deleteRow(i + 2);
+        return true;
+      }
+    }
+
+    throw new Error('Không tìm thấy công việc con với ID: ' + id);
+  } catch (error) {
+    Logger.log('Error deleting subtask: ' + error.toString());
+    throw new Error('Lỗi khi xóa công việc con: ' + error.message);
+  }
+}
+
+// Delete all subtasks belonging to a task (cleanup when the parent task is deleted)
+function deleteSubtasksForTask(taskId) {
+  try {
+    const sheet = getSubtasksSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return;
+
+    const data = sheet.getRange(2, 1, lastRow - 1, 2).getValues();
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (String(data[i][1]) === String(taskId)) {
+        sheet.deleteRow(i + 2);
+      }
+    }
+  } catch (error) {
+    Logger.log('Error deleting subtasks for task: ' + error.toString());
+  }
+}
+
+// ============================================================
+// TASK TEMPLATES
+// ============================================================
+
+function getTemplatesSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('Không thể kết nối với Google Sheet.');
+  }
+  let sheet = ss.getSheetByName(TEMPLATES_SHEET);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(TEMPLATES_SHEET);
+    sheet.appendRow(TEMPLATE_COLUMNS);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, TEMPLATE_COLUMNS.length).setFontWeight('bold').setBackground('#667eea').setFontColor('#ffffff');
+    sheet.setColumnWidth(1, 80);
+    sheet.setColumnWidth(2, 180);
+    sheet.setColumnWidth(3, 200);
+    sheet.setColumnWidth(4, 280);
+  }
+
+  return sheet;
+}
+
+// Get all templates
+function getTemplates() {
+  try {
+    const sheet = getTemplatesSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return [];
+
+    const data = sheet.getRange(2, 1, lastRow - 1, TEMPLATE_COLUMNS.length).getValues();
+    const result = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const id = row[0] ? String(row[0]).trim() : '';
+      if (!id) continue;
+
+      result.push({
+        id: id,
+        name: String(row[1] || ''),
+        title: String(row[2] || ''),
+        description: String(row[3] || ''),
+        priority: String(row[4] || 'Normal'),
+        category: String(row[5] || '')
+      });
+    }
+
+    return result;
+  } catch (error) {
+    Logger.log('Error in getTemplates: ' + error.toString());
+    throw new Error('Không thể tải danh sách mẫu công việc: ' + error.message);
+  }
+}
+
+// Add a new template
+function addTemplate(tpl) {
+  try {
+    if (!tpl || !tpl.name || !String(tpl.name).trim()) {
+      throw new Error('Tên mẫu không được để trống');
+    }
+    const sheet = getTemplatesSheet();
+    const id = Utilities.getUuid();
+    sheet.appendRow([
+      id,
+      String(tpl.name).trim(),
+      tpl.title ? String(tpl.title).trim() : '',
+      tpl.description ? String(tpl.description).trim() : '',
+      tpl.priority || 'Normal',
+      tpl.category || ''
+    ]);
+    return getTemplates();
+  } catch (error) {
+    Logger.log('Error adding template: ' + error.toString());
+    throw error;
+  }
+}
+
+// Delete a template
+function deleteTemplate(id) {
+  try {
+    const sheet = getTemplatesSheet();
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) {
+      throw new Error('Không tìm thấy mẫu để xóa');
+    }
+
+    const data = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (String(data[i][0]) === String(id)) {
+        sheet.deleteRow(i + 2);
+        return getTemplates();
+      }
+    }
+
+    throw new Error('Không tìm thấy mẫu với ID: ' + id);
+  } catch (error) {
+    Logger.log('Error deleting template: ' + error.toString());
+    throw error;
+  }
+}
+
+// ============================================================
+// REMINDER NOTIFICATIONS
+// ============================================================
+
+// Read current reminder settings from Script Properties
+function getReminderSettings() {
+  const props = PropertiesService.getScriptProperties();
+  const enabled = props.getProperty('REMINDER_ENABLED') === 'true';
+  const leadDays = parseInt(props.getProperty('REMINDER_LEAD_DAYS'), 10) || 1;
+  return { enabled: enabled, leadDays: leadDays };
+}
+
+// Enable/disable the daily email reminder trigger and save the lead time (days before due date)
+function setReminderSettings(enabled, leadDays) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const days = Math.max(0, parseInt(leadDays, 10) || 1);
+    props.setProperty('REMINDER_LEAD_DAYS', String(days));
+    props.setProperty('REMINDER_ENABLED', enabled ? 'true' : 'false');
+
+    // Remove any existing reminder triggers first to avoid duplicates
+    ScriptApp.getProjectTriggers().forEach(function(trigger) {
+      if (trigger.getHandlerFunction() === REMINDER_TRIGGER_HANDLER) {
+        ScriptApp.deleteTrigger(trigger);
+      }
+    });
+
+    if (enabled) {
+      ScriptApp.newTrigger(REMINDER_TRIGGER_HANDLER)
+        .timeBased()
+        .everyDays(1)
+        .atHour(8)
+        .create();
+    }
+
+    return getReminderSettings();
+  } catch (error) {
+    Logger.log('Error setting reminder settings: ' + error.toString());
+    throw new Error('Lỗi khi cập nhật cài đặt nhắc nhở: ' + error.message);
+  }
+}
+
+// Triggered daily (when enabled): emails a summary of tasks due soon or overdue
+function sendDueReminders() {
+  try {
+    const settings = getReminderSettings();
+    if (!settings.enabled) return;
+
+    const tasks = getTasks();
+    const todayStr = getTodayString();
+    const limitDate = new Date();
+    limitDate.setDate(limitDate.getDate() + settings.leadDays);
+    const limitStr = formatDateToString(limitDate);
+
+    const dueSoon = tasks.filter(function(t) {
+      if (t.status === 'Completed' || t.status === 'Cancel') return false;
+      if (!t.dueDate) return false;
+      return t.dueDate <= limitStr;
+    });
+
+    if (dueSoon.length === 0) return;
+
+    const email = Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
+    if (!email) return;
+
+    const overdue = dueSoon.filter(function(t) { return t.dueDate < todayStr; });
+    const upcoming = dueSoon.filter(function(t) { return t.dueDate >= todayStr; });
+
+    let body = 'Bạn có ' + dueSoon.length + ' công việc cần chú ý:\n\n';
+    if (overdue.length > 0) {
+      body += '⚠️ QUÁ HẠN (' + overdue.length + '):\n';
+      overdue.forEach(function(t) { body += '- ' + t.title + ' (hạn: ' + t.dueDate + ')\n'; });
+      body += '\n';
+    }
+    if (upcoming.length > 0) {
+      body += '📅 SẮP ĐẾN HẠN (' + upcoming.length + '):\n';
+      upcoming.forEach(function(t) { body += '- ' + t.title + ' (hạn: ' + t.dueDate + ')\n'; });
+    }
+
+    MailApp.sendEmail(email, 'Task Manager - Nhắc nhở công việc', body);
+  } catch (error) {
+    Logger.log('Error sending reminders: ' + error.toString());
   }
 }

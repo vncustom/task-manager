@@ -694,6 +694,298 @@
       font-size: 13px;
     }
 
+    /* Search box */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      color: #a0aec0;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .search-box input {
+      padding: 10px 14px 10px 36px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      width: 220px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #2d3748;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+    }
+
+    .search-box .clear-search {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #a0aec0;
+      cursor: pointer;
+      font-size: 13px;
+      display: none;
+      padding: 4px;
+    }
+
+    .search-box .clear-search.show {
+      display: block;
+    }
+
+    .search-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #a0aec0;
+      grid-column: 1 / -1;
+    }
+
+    /* Subtasks */
+    .subtasks-section {
+      margin-top: 4px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+    }
+
+    .subtasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .subtasks-header label {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+    }
+
+    .subtasks-progress {
+      font-size: 12px;
+      color: #667eea;
+      font-weight: 600;
+      background: #eef2ff;
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+
+    .subtask-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .subtask-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+
+    .subtask-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .subtask-item span {
+      flex: 1;
+      font-size: 13px;
+      color: #2d3748;
+      word-break: break-word;
+    }
+
+    .subtask-item.completed span {
+      text-decoration: line-through;
+      color: #a0aec0;
+    }
+
+    .subtask-item .subtask-delete {
+      background: none;
+      border: none;
+      color: #cbd5e0;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+
+    .subtask-item .subtask-delete:hover {
+      color: #e53e3e;
+    }
+
+    .subtask-empty-hint {
+      font-size: 12px;
+      color: #a0aec0;
+      padding: 6px 0;
+    }
+
+    .subtask-add-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .subtask-add-row input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .subtask-add-row button {
+      padding: 8px 14px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .subtask-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #eef2ff;
+      color: #4c51bf;
+    }
+
+    .subtask-badge.all-done {
+      background: #e8f5e9;
+      color: #27ae60;
+    }
+
+    /* Templates */
+    .template-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .template-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .template-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .template-item-name {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+      margin-bottom: 3px;
+    }
+
+    .template-item-title {
+      font-size: 12px;
+      color: #718096;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .template-empty {
+      text-align: center;
+      color: #a0aec0;
+      padding: 30px 10px;
+      font-size: 14px;
+    }
+
+    /* Reminder settings */
+    .reminder-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #718096;
+      margin-top: 6px;
+    }
+
+    .reminder-status.on { color: #27ae60; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .toggle-row label {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #cbd5e0;
+      transition: 0.2s;
+      border-radius: 24px;
+    }
+
+    .switch .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.2s;
+      border-radius: 50%;
+    }
+
+    .switch input:checked + .slider {
+      background-color: #667eea;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
     .stats-filters {
       display: flex;
       gap: 15px;
@@ -917,8 +1209,21 @@
         </div>
       </div>
       <div class="header-controls">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search" placeholder="Tìm công việc..." oninput="handleSearchInput()">
+          <button class="clear-search" id="clear-search-btn" onclick="clearSearch()" title="Xóa tìm kiếm">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
         <button class="btn btn-secondary" onclick="refreshData()" title="Làm mới dữ liệu từ Google Sheets">
           <i class="fas fa-sync-alt"></i> Đồng bộ
+        </button>
+        <button class="btn btn-secondary" onclick="openTemplatesModal()" title="Quản lý mẫu công việc">
+          <i class="fas fa-clone"></i> Mẫu
+        </button>
+        <button class="btn btn-secondary" onclick="openReminderModal()" title="Cài đặt nhắc nhở">
+          <i class="fas fa-bell"></i> Nhắc nhở
         </button>
         <button class="btn btn-primary" onclick="openModal()">
           <i class="fas fa-plus"></i> Thêm việc mới
@@ -1053,6 +1358,10 @@
         <div class="stats-chart" id="stats-chart">
           <!-- Chart will be rendered here -->
         </div>
+
+        <div class="stats-chart" id="stats-chart-trend">
+          <!-- Weekly completion trend will be rendered here -->
+        </div>
       </div>
     </div>
   </div>
@@ -1066,6 +1375,12 @@
       </div>
       <form id="task-form" onsubmit="saveTask(event)">
         <input type="hidden" id="task-id">
+        <div class="form-group" id="template-picker-group">
+          <label for="task-template-picker">Tạo từ mẫu (tùy chọn)</label>
+          <select id="task-template-picker" onchange="applyTemplateToForm(this.value)">
+            <option value="">-- Không dùng mẫu --</option>
+          </select>
+        </div>
         <div class="form-group">
           <label for="task-title">Tiêu đề *</label>
           <input type="text" id="task-title" required placeholder="Nhập tiêu đề công việc">
@@ -1103,7 +1418,26 @@
           <input type="date" id="task-due-date">
           <div class="hint">Để trống nếu không có hạn chót</div>
         </div>
+
+        <div class="subtasks-section" id="subtasks-section" style="display: none;">
+          <div class="subtasks-header">
+            <label><i class="fas fa-list-check"></i> Công việc con</label>
+            <span class="subtasks-progress" id="subtasks-progress">0/0</span>
+          </div>
+          <div class="subtask-list" id="subtask-list"></div>
+          <div class="subtask-add-row">
+            <input type="text" id="new-subtask-title" placeholder="Thêm công việc con..." onkeydown="if(event.key==='Enter'){event.preventDefault(); addSubtaskUI();}">
+            <button type="button" onclick="addSubtaskUI()"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="subtasks-section" id="subtasks-disabled-hint" style="display: none;">
+          <div class="hint" style="margin: 0;">Lưu công việc trước để có thể thêm công việc con.</div>
+        </div>
+
         <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="save-as-template-btn" onclick="saveCurrentAsTemplate()" style="margin-right: auto;">
+            <i class="fas fa-clone"></i> Lưu thành mẫu
+          </button>
           <button type="button" class="btn btn-danger" onclick="closeModal()">Hủy</button>
           <button type="submit" id="task-save-btn" class="btn btn-primary">Lưu</button>
         </div>
@@ -1135,6 +1469,68 @@
     </div>
   </div>
 
+  <!-- Templates Modal -->
+  <div class="modal" id="templates-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-clone"></i> Mẫu công việc</h2>
+        <button class="modal-close" onclick="closeTemplatesModal()">&times;</button>
+      </div>
+      <div class="hint" style="margin-bottom: 14px;">
+        Mở một công việc bất kỳ (hoặc form thêm mới), điền thông tin rồi bấm "Lưu thành mẫu" để tạo mẫu tại đây.
+      </div>
+      <div class="template-list" id="template-list">
+        <!-- Templates will be rendered here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="closeTemplatesModal()">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reminder Settings Modal -->
+  <div class="modal" id="reminder-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-bell"></i> Cài đặt nhắc nhở</h2>
+        <button class="modal-close" onclick="closeReminderModal()">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <div class="toggle-row">
+          <label for="reminder-browser-toggle">Thông báo trên trình duyệt</label>
+          <button type="button" class="btn btn-secondary" id="reminder-browser-btn" onclick="requestNotificationPermission()" style="padding: 6px 14px;">
+            Bật
+          </button>
+        </div>
+        <div class="reminder-status" id="reminder-browser-status">
+          <i class="fas fa-circle"></i> <span>Chưa bật</span>
+        </div>
+        <div class="hint">Hiện thông báo khi công việc đến hạn hoặc quá hạn, chỉ hoạt động khi tab đang mở.</div>
+      </div>
+
+      <div class="form-group">
+        <div class="toggle-row">
+          <label for="reminder-email-toggle">Nhắc nhở qua email hàng ngày</label>
+          <label class="switch">
+            <input type="checkbox" id="reminder-email-toggle" onchange="toggleEmailReminder(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="hint">Gửi email tổng hợp công việc sắp/đã quá hạn mỗi ngày lúc 8:00 (yêu cầu deploy trên Google Apps Script).</div>
+      </div>
+
+      <div class="form-group">
+        <label for="reminder-lead-days">Nhắc trước bao nhiêu ngày</label>
+        <input type="number" id="reminder-lead-days" min="0" max="30" value="1" onchange="toggleEmailReminder(document.getElementById('reminder-email-toggle').checked)">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeReminderModal()">Xong</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast">
     <i class="fas fa-info-circle"></i>
@@ -1146,7 +1542,11 @@
     let currentDate = new Date();
     let tasks = [];
     let categories = [];
+    let subtasks = [];
+    let templates = [];
     let draggedTaskId = null;
+    let searchQuery = '';
+    let currentModalTaskId = '';
 
     // Check if running inside Google Apps Script web app
     const isGoogleAppsScript = (typeof google !== 'undefined' && google.script && google.script.run);
@@ -1217,6 +1617,9 @@
           const index = list.findIndex(t => String(t.id) === String(id));
           if (index === -1) return reject(new Error('Task không tồn tại'));
           list[index] = { ...list[index], ...updates, updatedAt: new Date().toISOString() };
+          if (updates.status === 'Completed' && !list[index].completedAt) {
+            list[index].completedAt = new Date().toISOString();
+          }
           localStorage.setItem('tm_tasks', JSON.stringify(list));
           setTimeout(() => resolve(list[index]), 100);
         });
@@ -1226,7 +1629,78 @@
           let list = JSON.parse(localStorage.getItem('tm_tasks') || '[]');
           list = list.filter(t => String(t.id) !== String(id));
           localStorage.setItem('tm_tasks', JSON.stringify(list));
+          let subs = JSON.parse(localStorage.getItem('tm_subtasks') || '[]');
+          subs = subs.filter(s => String(s.taskId) !== String(id));
+          localStorage.setItem('tm_subtasks', JSON.stringify(subs));
           setTimeout(() => resolve(true), 100);
+        });
+      },
+      getAllSubtasks: function() {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_subtasks') || '[]');
+          setTimeout(() => resolve(list), 80);
+        });
+      },
+      addSubtask: function(taskId, title) {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_subtasks') || '[]');
+          const now = new Date().toISOString();
+          list.push({ id: 'sub_' + Date.now(), taskId: String(taskId), title: String(title).trim(), completed: false, createdAt: now, updatedAt: now });
+          localStorage.setItem('tm_subtasks', JSON.stringify(list));
+          setTimeout(() => resolve(list.filter(s => String(s.taskId) === String(taskId))), 80);
+        });
+      },
+      updateSubtask: function(id, updates) {
+        return new Promise((resolve, reject) => {
+          const list = JSON.parse(localStorage.getItem('tm_subtasks') || '[]');
+          const index = list.findIndex(s => String(s.id) === String(id));
+          if (index === -1) return reject(new Error('Không tìm thấy công việc con'));
+          list[index] = { ...list[index], ...updates, updatedAt: new Date().toISOString() };
+          localStorage.setItem('tm_subtasks', JSON.stringify(list));
+          setTimeout(() => resolve(list.filter(s => String(s.taskId) === String(list[index].taskId))), 80);
+        });
+      },
+      deleteSubtask: function(id) {
+        return new Promise(resolve => {
+          let list = JSON.parse(localStorage.getItem('tm_subtasks') || '[]');
+          list = list.filter(s => String(s.id) !== String(id));
+          localStorage.setItem('tm_subtasks', JSON.stringify(list));
+          setTimeout(() => resolve(true), 80);
+        });
+      },
+      getTemplates: function() {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_templates') || '[]');
+          setTimeout(() => resolve(list), 80);
+        });
+      },
+      addTemplate: function(tpl) {
+        return new Promise(resolve => {
+          const list = JSON.parse(localStorage.getItem('tm_templates') || '[]');
+          list.push({ id: 'tpl_' + Date.now(), name: tpl.name, title: tpl.title || '', description: tpl.description || '', priority: tpl.priority || 'Normal', category: tpl.category || '' });
+          localStorage.setItem('tm_templates', JSON.stringify(list));
+          setTimeout(() => resolve(list), 80);
+        });
+      },
+      deleteTemplate: function(id) {
+        return new Promise(resolve => {
+          let list = JSON.parse(localStorage.getItem('tm_templates') || '[]');
+          list = list.filter(t => String(t.id) !== String(id));
+          localStorage.setItem('tm_templates', JSON.stringify(list));
+          setTimeout(() => resolve(list), 80);
+        });
+      },
+      getReminderSettings: function() {
+        return new Promise(resolve => {
+          const stored = JSON.parse(localStorage.getItem('tm_reminder_settings') || 'null');
+          setTimeout(() => resolve(stored || { enabled: false, leadDays: 1 }), 50);
+        });
+      },
+      setReminderSettings: function(enabled, leadDays) {
+        return new Promise(resolve => {
+          const settings = { enabled: !!enabled, leadDays: parseInt(leadDays, 10) || 1 };
+          localStorage.setItem('tm_reminder_settings', JSON.stringify(settings));
+          setTimeout(() => resolve(settings), 50);
         });
       },
       getCategoriesFromSheet: function() {
@@ -1272,10 +1746,22 @@
             const c = t.category || 'Khác';
             byCategory[c] = (byCategory[c] || 0) + 1;
           });
+          const todayStr = formatDateToYYYYMMDD(new Date());
+          const overdue = list.filter(t => t.status !== 'Completed' && t.status !== 'Cancel' && t.dueDate && formatDateToYYYYMMDD(t.dueDate) < todayStr).length;
+          const byWeek = {};
+          list.forEach(t => {
+            if (t.status !== 'Completed' || !t.completedAt) return;
+            const d = new Date(t.completedAt);
+            if (isNaN(d.getTime())) return;
+            const weekStart = new Date(d);
+            weekStart.setDate(d.getDate() - d.getDay());
+            const label = formatDateToYYYYMMDD(weekStart);
+            byWeek[label] = (byWeek[label] || 0) + 1;
+          });
           const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
           setTimeout(() => resolve({
-            total, completed, inProgress, notStarted, cancelled,
-            byPriority, byCategory, completionRate: rate
+            total, completed, inProgress, notStarted, cancelled, overdue,
+            byPriority, byCategory, byWeek, completionRate: rate
           }), 100);
         });
       },
@@ -1355,6 +1841,51 @@
         .replace(/'/g, '&#039;');
     }
 
+    // Search: normalize (lowercase, strip Vietnamese diacritics) for accent-insensitive matching
+    const VIETNAMESE_ACCENT_MAP = {
+      'à':'a','á':'a','ạ':'a','ả':'a','ã':'a','â':'a','ầ':'a','ấ':'a','ậ':'a','ẩ':'a','ẫ':'a','ă':'a','ằ':'a','ắ':'a','ặ':'a','ẳ':'a','ẵ':'a',
+      'è':'e','é':'e','ẹ':'e','ẻ':'e','ẽ':'e','ê':'e','ề':'e','ế':'e','ệ':'e','ể':'e','ễ':'e',
+      'ì':'i','í':'i','ị':'i','ỉ':'i','ĩ':'i',
+      'ò':'o','ó':'o','ọ':'o','ỏ':'o','õ':'o','ô':'o','ồ':'o','ố':'o','ộ':'o','ổ':'o','ỗ':'o','ơ':'o','ờ':'o','ớ':'o','ợ':'o','ở':'o','ỡ':'o',
+      'ù':'u','ú':'u','ụ':'u','ủ':'u','ũ':'u','ư':'u','ừ':'u','ứ':'u','ự':'u','ử':'u','ữ':'u',
+      'ỳ':'y','ý':'y','ỵ':'y','ỷ':'y','ỹ':'y',
+      'đ':'d'
+    };
+
+    function normalizeForSearch(str) {
+      if (!str) return '';
+      return String(str)
+        .toLowerCase()
+        .split('')
+        .map(ch => VIETNAMESE_ACCENT_MAP[ch] || ch)
+        .join('')
+        .trim();
+    }
+
+    function matchesSearch(task) {
+      if (!searchQuery) return true;
+      const q = normalizeForSearch(searchQuery);
+      const haystack = normalizeForSearch((task.title || '') + ' ' + (task.description || ''));
+      return haystack.includes(q);
+    }
+
+    function handleSearchInput() {
+      const input = document.getElementById('global-search');
+      searchQuery = input.value || '';
+      document.getElementById('clear-search-btn').classList.toggle('show', searchQuery.length > 0);
+      renderKanban();
+      renderCalendar();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('global-search');
+      input.value = '';
+      searchQuery = '';
+      document.getElementById('clear-search-btn').classList.remove('show');
+      renderKanban();
+      renderCalendar();
+    }
+
     // UI Loading Indicator
     function showLoading(isLoading) {
       const badge = document.getElementById('loading-badge');
@@ -1368,18 +1899,65 @@
       setDefaultDateRange();
       renderCalendar();
       renderKanban();
+      updateNotificationStatusUI();
       await refreshData();
+      checkClientReminders();
+      setInterval(checkClientReminders, 5 * 60 * 1000);
     });
 
     async function refreshData() {
       showLoading(true);
       try {
-        await Promise.all([loadTasks(), loadCategories()]);
+        await Promise.all([loadTasks(), loadCategories(), loadSubtasks(), loadTemplates()]);
       } catch (e) {
         console.error('Lỗi tải dữ liệu ban đầu:', e);
       } finally {
         showLoading(false);
       }
+    }
+
+    // Generic helper: call a backend function (Apps Script or LocalBackend mock) as a Promise
+    function callBackend(fnName, ...args) {
+      return new Promise((resolve, reject) => {
+        if (isGoogleAppsScript) {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)
+            [fnName](...args);
+        } else if (typeof LocalBackend[fnName] === 'function') {
+          LocalBackend[fnName](...args).then(resolve).catch(reject);
+        } else {
+          resolve(null);
+        }
+      });
+    }
+
+    // Load subtasks (bulk, for progress badges + modal editing)
+    function loadSubtasks() {
+      return callBackend('getAllSubtasks')
+        .then(data => {
+          subtasks = Array.isArray(data) ? data : [];
+          renderKanban();
+          return subtasks;
+        })
+        .catch(err => {
+          console.error('Lỗi tải công việc con:', err);
+          return [];
+        });
+    }
+
+    // Load task templates
+    function loadTemplates() {
+      return callBackend('getTemplates')
+        .then(data => {
+          templates = Array.isArray(data) ? data : [];
+          populateTemplatePicker();
+          return templates;
+        })
+        .catch(err => {
+          console.error('Lỗi tải mẫu công việc:', err);
+          return [];
+        });
     }
 
     // Load tasks
@@ -1547,6 +2125,7 @@
         // Filter tasks for this day with status filter applied
         const dayTasks = tasks.filter(t => {
           if (filterStatus && t.status !== filterStatus) return false;
+          if (!matchesSearch(t)) return false;
           return getTaskDueDateStr(t.dueDate) === dateStr;
         });
         
@@ -1604,6 +2183,7 @@
         if (filterStatus && task.status !== filterStatus) return false;
         if (filterPriority && task.priority !== filterPriority) return false;
         if (filterCategory && task.category !== filterCategory) return false;
+        if (!matchesSearch(task)) return false;
         return true;
       });
       
@@ -1615,10 +2195,15 @@
         'Cancel': { label: 'Cancel', class: 'cancelled' }
       };
       
+      if (searchQuery && filteredTasks.length === 0) {
+        board.innerHTML = `<div class="search-empty"><i class="fas fa-search" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>Không tìm thấy công việc nào khớp với "${escapeHtml(searchQuery)}"</div>`;
+        return;
+      }
+
       let html = statuses.map(status => {
         const statusTasks = filteredTasks.filter(t => t.status === status);
         const statusInfo = statusLabels[status];
-        
+
         return `
           <div class="kanban-column ${statusInfo.class}" 
                ondragover="handleDragOver(event)"
@@ -1639,14 +2224,24 @@
       board.innerHTML = html;
     }
 
+    // Get {total, completed} subtask counts for a task
+    function getSubtaskCounts(taskId) {
+      const list = subtasks.filter(s => String(s.taskId) === String(taskId));
+      return { total: list.length, completed: list.filter(s => s.completed).length };
+    }
+
     function renderKanbanTask(task) {
       const todayStr = getTodayDateStr();
       const dueStr = getTaskDueDateStr(task.dueDate);
       const isOverdue = dueStr && dueStr < todayStr && task.status !== 'Completed' && task.status !== 'Cancel';
-      
+
       const priorityClass = (task.priority || 'Normal').toLowerCase();
       const statusClass = (task.status || 'Not Started').toLowerCase().replace(/\s+/g, '-');
-      
+      const subtaskCounts = getSubtaskCounts(task.id);
+      const subtaskBadge = subtaskCounts.total > 0
+        ? `<span class="subtask-badge ${subtaskCounts.completed === subtaskCounts.total ? 'all-done' : ''}"><i class="fas fa-list-check"></i> ${subtaskCounts.completed}/${subtaskCounts.total}</span>`
+        : '';
+
       return `
         <div class="kanban-task ${priorityClass} ${statusClass}" 
              draggable="true" 
@@ -1664,6 +2259,7 @@
             <span class="due-date ${isOverdue ? 'overdue' : ''}">
               <i class="fas fa-clock"></i> ${task.dueDate ? formatDate(task.dueDate) : 'Không có hạn'}
             </span>
+            ${subtaskBadge}
           </div>
           <div class="kanban-task-actions">
             <button class="edit" onclick="event.stopPropagation(); editTask('${task.id}')">
@@ -1764,6 +2360,11 @@
       document.getElementById('task-form').reset();
       document.getElementById('task-id').value = '';
       document.getElementById('modal-title').textContent = 'Thêm việc mới';
+      currentModalTaskId = '';
+      document.getElementById('template-picker-group').style.display = '';
+      document.getElementById('task-template-picker').value = '';
+      document.getElementById('subtasks-section').style.display = 'none';
+      document.getElementById('subtasks-disabled-hint').style.display = '';
       document.getElementById('task-modal').classList.add('active');
     }
 
@@ -1788,6 +2389,11 @@
       document.getElementById('task-category').value = task.category || '';
       document.getElementById('task-due-date').value = getTaskDueDateStr(task.dueDate);
       document.getElementById('modal-title').textContent = 'Sửa việc';
+      currentModalTaskId = task.id;
+      document.getElementById('template-picker-group').style.display = 'none';
+      document.getElementById('subtasks-disabled-hint').style.display = 'none';
+      document.getElementById('subtasks-section').style.display = '';
+      renderSubtasksInModal(task.id);
       document.getElementById('task-modal').classList.add('active');
     }
 
@@ -1813,12 +2419,19 @@
         if (taskId) {
           await updateTask(taskId, taskData);
           showToast('Cập nhật thành công!', 'success');
+          closeModal();
+          await loadTasks();
         } else {
-          await addTask(taskData);
+          const created = await addTask(taskData);
           showToast('Thêm công việc thành công!', 'success');
+          await loadTasks();
+          // Switch modal into edit mode so subtasks can be added right away
+          if (created && created.id) {
+            editTask(created.id);
+          } else {
+            closeModal();
+          }
         }
-        closeModal();
-        await loadTasks();
       } catch (err) {
         console.error('Lỗi khi lưu task:', err);
         showToast('Lỗi: ' + (err.message || err), 'error');
@@ -1842,6 +2455,7 @@
               LocalBackend.deleteTask(taskId).then(resolve).catch(reject);
             }
           });
+          subtasks = subtasks.filter(s => String(s.taskId) !== String(taskId));
           showToast('Xóa thành công!', 'success');
           await loadTasks();
         } catch (err) {
@@ -1850,6 +2464,68 @@
         } finally {
           showLoading(false);
         }
+      }
+    }
+
+    // Subtasks (inside Task modal)
+    function renderSubtasksInModal(taskId) {
+      const list = subtasks.filter(s => String(s.taskId) === String(taskId));
+      const container = document.getElementById('subtask-list');
+      const progress = document.getElementById('subtasks-progress');
+
+      const completedCount = list.filter(s => s.completed).length;
+      progress.textContent = `${completedCount}/${list.length}`;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="subtask-empty-hint">Chưa có công việc con nào.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(s => `
+        <div class="subtask-item ${s.completed ? 'completed' : ''}">
+          <input type="checkbox" ${s.completed ? 'checked' : ''} onchange="toggleSubtaskUI('${s.id}', this.checked)">
+          <span>${escapeHtml(s.title)}</span>
+          <button type="button" class="subtask-delete" onclick="deleteSubtaskUI('${s.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    async function addSubtaskUI() {
+      const input = document.getElementById('new-subtask-title');
+      const title = input.value.trim();
+      if (!title || !currentModalTaskId) return;
+
+      try {
+        const updated = await callBackend('addSubtask', currentModalTaskId, title);
+        subtasks = subtasks.filter(s => String(s.taskId) !== String(currentModalTaskId)).concat(updated);
+        input.value = '';
+        renderSubtasksInModal(currentModalTaskId);
+        renderKanban();
+      } catch (err) {
+        showToast('Lỗi khi thêm công việc con: ' + (err.message || err), 'error');
+      }
+    }
+
+    async function toggleSubtaskUI(id, completed) {
+      try {
+        const updated = await callBackend('updateSubtask', id, { completed });
+        subtasks = subtasks.filter(s => String(s.taskId) !== String(currentModalTaskId)).concat(updated);
+        renderSubtasksInModal(currentModalTaskId);
+        renderKanban();
+      } catch (err) {
+        showToast('Lỗi khi cập nhật công việc con: ' + (err.message || err), 'error');
+        renderSubtasksInModal(currentModalTaskId);
+      }
+    }
+
+    async function deleteSubtaskUI(id) {
+      try {
+        await callBackend('deleteSubtask', id);
+        subtasks = subtasks.filter(s => String(s.id) !== String(id));
+        renderSubtasksInModal(currentModalTaskId);
+        renderKanban();
+      } catch (err) {
+        showToast('Lỗi khi xóa công việc con: ' + (err.message || err), 'error');
       }
     }
 
@@ -1901,6 +2577,93 @@
       }
     }
 
+    // Task Templates
+    function populateTemplatePicker() {
+      const picker = document.getElementById('task-template-picker');
+      if (!picker) return;
+      const options = templates.map(t => `<option value="${escapeHtml(t.id)}">${escapeHtml(t.name)}</option>`).join('');
+      picker.innerHTML = '<option value="">-- Không dùng mẫu --</option>' + options;
+    }
+
+    function applyTemplateToForm(templateId) {
+      if (!templateId) return;
+      const tpl = templates.find(t => String(t.id) === String(templateId));
+      if (!tpl) return;
+
+      document.getElementById('task-title').value = tpl.title || '';
+      document.getElementById('task-description').value = tpl.description || '';
+      document.getElementById('task-priority').value = tpl.priority || 'Normal';
+      if (tpl.category) document.getElementById('task-category').value = tpl.category;
+    }
+
+    async function saveCurrentAsTemplate() {
+      const title = document.getElementById('task-title').value.trim();
+      if (!title) {
+        showToast('Nhập tiêu đề công việc trước khi lưu thành mẫu.', 'error');
+        return;
+      }
+      const name = prompt('Đặt tên cho mẫu này:', title);
+      if (!name || !name.trim()) return;
+
+      const tpl = {
+        name: name.trim(),
+        title: title,
+        description: document.getElementById('task-description').value.trim(),
+        priority: document.getElementById('task-priority').value,
+        category: document.getElementById('task-category').value
+      };
+
+      try {
+        const updated = await callBackend('addTemplate', tpl);
+        templates = Array.isArray(updated) ? updated : templates;
+        populateTemplatePicker();
+        showToast('Đã lưu mẫu "' + tpl.name + '"!', 'success');
+      } catch (err) {
+        showToast('Lỗi khi lưu mẫu: ' + (err.message || err), 'error');
+      }
+    }
+
+    function openTemplatesModal() {
+      renderTemplatesList();
+      document.getElementById('templates-modal').classList.add('active');
+    }
+
+    function closeTemplatesModal() {
+      document.getElementById('templates-modal').classList.remove('active');
+    }
+
+    function renderTemplatesList() {
+      const container = document.getElementById('template-list');
+      if (templates.length === 0) {
+        container.innerHTML = '<div class="template-empty">Chưa có mẫu công việc nào.</div>';
+        return;
+      }
+      container.innerHTML = templates.map(t => `
+        <div class="template-item">
+          <div class="template-item-info">
+            <div class="template-item-name"><i class="fas fa-clone"></i> ${escapeHtml(t.name)}</div>
+            <div class="template-item-title">${escapeHtml(t.title || '')}</div>
+          </div>
+          <button type="button" class="btn btn-danger" style="padding: 6px 12px;" onclick="deleteTemplateUI('${t.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function deleteTemplateUI(id) {
+      if (!confirm('Xóa mẫu công việc này?')) return;
+      try {
+        const updated = await callBackend('deleteTemplate', id);
+        templates = Array.isArray(updated) ? updated : templates.filter(t => String(t.id) !== String(id));
+        populateTemplatePicker();
+        renderTemplatesList();
+        showToast('Đã xóa mẫu!', 'success');
+      } catch (err) {
+        showToast('Lỗi khi xóa mẫu: ' + (err.message || err), 'error');
+      }
+    }
+
     // Task API wrappers returning Promises
     function addTask(task) {
       return new Promise((resolve, reject) => {
@@ -1947,6 +2710,111 @@
           warning.style.display = 'none';
         }
       }
+    }
+
+    // Reminder Notifications
+    function openReminderModal() {
+      document.getElementById('reminder-modal').classList.add('active');
+      updateNotificationStatusUI();
+      callBackend('getReminderSettings').then(settings => {
+        if (!settings) return;
+        document.getElementById('reminder-email-toggle').checked = !!settings.enabled;
+        document.getElementById('reminder-lead-days').value = settings.leadDays || 1;
+      }).catch(err => console.error('Lỗi tải cài đặt nhắc nhở:', err));
+    }
+
+    function closeReminderModal() {
+      document.getElementById('reminder-modal').classList.remove('active');
+    }
+
+    async function toggleEmailReminder(enabled) {
+      const leadDays = parseInt(document.getElementById('reminder-lead-days').value, 10) || 1;
+      try {
+        await callBackend('setReminderSettings', enabled, leadDays);
+        showToast(enabled ? 'Đã bật nhắc nhở qua email!' : 'Đã tắt nhắc nhở qua email.', 'success');
+      } catch (err) {
+        showToast('Lỗi khi cập nhật nhắc nhở email: ' + (err.message || err), 'error');
+        document.getElementById('reminder-email-toggle').checked = !enabled;
+      }
+    }
+
+    function updateNotificationStatusUI() {
+      const statusEl = document.getElementById('reminder-browser-status');
+      const btn = document.getElementById('reminder-browser-btn');
+      if (!statusEl || !btn) return;
+
+      if (typeof Notification === 'undefined') {
+        statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Trình duyệt không hỗ trợ</span>';
+        btn.disabled = true;
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        statusEl.classList.add('on');
+        statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Đã bật</span>';
+        btn.textContent = 'Đã bật';
+        btn.disabled = true;
+      } else if (Notification.permission === 'denied') {
+        statusEl.classList.remove('on');
+        statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Bị chặn (kiểm tra cài đặt trình duyệt)</span>';
+        btn.textContent = 'Bị chặn';
+        btn.disabled = true;
+      } else {
+        statusEl.classList.remove('on');
+        statusEl.innerHTML = '<i class="fas fa-circle"></i> <span>Chưa bật</span>';
+        btn.textContent = 'Bật';
+        btn.disabled = false;
+      }
+    }
+
+    function requestNotificationPermission() {
+      if (typeof Notification === 'undefined') return;
+      Notification.requestPermission().then(() => updateNotificationStatusUI());
+    }
+
+    // Scan loaded tasks for due/overdue items and surface a toast + (if permitted) a browser notification.
+    // Dedupes per task per day using localStorage so the same task doesn't re-notify on every refresh.
+    function checkClientReminders() {
+      if (!tasks || tasks.length === 0) return;
+
+      const todayStr = getTodayDateStr();
+      const dueOrOverdue = tasks.filter(task => {
+        if (task.status === 'Completed' || task.status === 'Cancel') return false;
+        const dueStr = getTaskDueDateStr(task.dueDate);
+        return dueStr && dueStr <= todayStr;
+      });
+
+      if (dueOrOverdue.length === 0) return;
+
+      let notifiedKey = 'tm_notified_' + todayStr;
+      let notifiedIds = [];
+      try {
+        notifiedIds = JSON.parse(localStorage.getItem(notifiedKey) || '[]');
+      } catch (e) { notifiedIds = []; }
+
+      const newOnes = dueOrOverdue.filter(t => !notifiedIds.includes(String(t.id)));
+      if (newOnes.length === 0) return;
+
+      const overdueCount = newOnes.filter(t => getTaskDueDateStr(t.dueDate) < todayStr).length;
+      const dueTodayCount = newOnes.length - overdueCount;
+      let message = '';
+      if (overdueCount > 0 && dueTodayCount > 0) {
+        message = `Bạn có ${dueTodayCount} công việc đến hạn hôm nay và ${overdueCount} công việc quá hạn.`;
+      } else if (overdueCount > 0) {
+        message = `Bạn có ${overdueCount} công việc đã quá hạn.`;
+      } else {
+        message = `Bạn có ${dueTodayCount} công việc đến hạn hôm nay.`;
+      }
+
+      showToast(message, 'error');
+
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        new Notification('Task Manager - Nhắc nhở công việc', { body: message });
+      }
+
+      try {
+        localStorage.setItem(notifiedKey, JSON.stringify(notifiedIds.concat(newOnes.map(t => String(t.id)))));
+      } catch (e) { /* localStorage unavailable, skip dedupe persistence */ }
     }
 
     // Statistics functions
@@ -2020,6 +2888,16 @@
           <div class="value" style="color: #9b59b6;">${stats.notStarted}</div>
           <div class="trend">Chờ bắt đầu</div>
         </div>
+        <div class="stat-card">
+          <h3>Quá hạn</h3>
+          <div class="value" style="color: #e74c3c;">${stats.overdue || 0}</div>
+          <div class="trend">Cần xử lý gấp</div>
+        </div>
+        <div class="stat-card">
+          <h3>Đã hủy</h3>
+          <div class="value" style="color: #95a5a6;">${stats.cancelled || 0}</div>
+          <div class="trend">Không thực hiện</div>
+        </div>
       `;
       
       // Render priority chart
@@ -2078,6 +2956,37 @@
       }
       
       chart.innerHTML = chartHtml;
+
+      renderWeeklyTrend(stats.byWeek || {});
+    }
+
+    // Render weekly completion trend (report): number of tasks completed per week within range
+    function renderWeeklyTrend(byWeek) {
+      const trendEl = document.getElementById('stats-chart-trend');
+      if (!trendEl) return;
+
+      const weeks = Object.keys(byWeek).sort();
+      if (weeks.length === 0) {
+        trendEl.innerHTML = '<h3>Xu hướng hoàn thành theo tuần</h3><p style="color: #6c757d; font-size: 13px;">Chưa có công việc nào hoàn thành trong giai đoạn này.</p>';
+        return;
+      }
+
+      const maxVal = Math.max(...weeks.map(w => byWeek[w]), 1);
+      let html = '<h3>Xu hướng hoàn thành theo tuần</h3>';
+      weeks.forEach(weekStart => {
+        const value = byWeek[weekStart];
+        const percentage = (value / maxVal) * 100;
+        html += `
+          <div class="chart-bar-container">
+            <div class="chart-label">Tuần ${formatDate(weekStart)}</div>
+            <div class="chart-bar">
+              <div class="chart-bar-fill" style="width: ${percentage}%; background: #667eea;"></div>
+            </div>
+            <div class="chart-value">${value}</div>
+          </div>
+        `;
+      });
+      trendEl.innerHTML = html;
     }
 
     function getPriorityColor(priority) {
@@ -2144,6 +3053,14 @@
 
     document.getElementById('category-modal')?.addEventListener('click', function(e) {
       if (e.target === this) closeCategoryModal();
+    });
+
+    document.getElementById('templates-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeTemplatesModal();
+    });
+
+    document.getElementById('reminder-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeReminderModal();
     });
   </script>
 </body>
