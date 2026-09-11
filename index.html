@@ -598,6 +598,125 @@
       color: #c05621;
     }
 
+    /* List View */
+    .list-table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+    }
+
+    .task-list-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .task-list-table th {
+      background: #f8f9fa;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+      border-bottom: 2px solid #e9ecef;
+      white-space: nowrap;
+    }
+
+    .task-list-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f3f5;
+      vertical-align: middle;
+    }
+
+    .task-list-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .task-list-table tbody tr:hover td {
+      background: #f8faff;
+    }
+
+    .task-list-table tr.overdue-row td {
+      background: #fff5f5;
+    }
+
+    .task-list-table .task-title-cell {
+      font-weight: 600;
+      color: #2d3748;
+      cursor: pointer;
+    }
+
+    .task-list-table .task-title-cell:hover {
+      color: #667eea;
+      text-decoration: underline;
+    }
+
+    .task-list-table .task-desc-preview {
+      font-size: 11px;
+      color: #a0aec0;
+      font-weight: 400;
+      margin-top: 3px;
+      max-width: 320px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .list-no-date {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    .due-overdue-text {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .list-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .list-actions button {
+      padding: 5px 9px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .list-actions button:hover {
+      opacity: 0.85;
+      transform: scale(1.05);
+    }
+
+    .list-actions .edit {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+
+    .list-actions .delete {
+      background: #feebc8;
+      color: #c05621;
+    }
+
+    .list-empty-row td {
+      text-align: center;
+      padding: 50px 20px;
+      color: #a0aec0;
+    }
+
     /* Statistics View */
     .stats-container {
       display: grid;
@@ -1241,6 +1360,9 @@
       <div class="tab" onclick="switchTab('kanban', this)">
         <i class="fas fa-columns"></i> Kanban
       </div>
+      <div class="tab" onclick="switchTab('list', this)">
+        <i class="fas fa-list-ul"></i> Danh sách
+      </div>
       <div class="tab" onclick="switchTab('statistics', this)">
         <i class="fas fa-chart-bar"></i> Thống kê
       </div>
@@ -1325,6 +1447,76 @@
 
         <div class="kanban-board" id="kanban-board">
           <!-- Kanban columns will be rendered here -->
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div id="list-view" class="view">
+        <div class="filters">
+          <div class="filter-group">
+            <label for="list-filter-status">Trạng thái:</label>
+            <select id="list-filter-status" onchange="renderListView()">
+              <option value="">Tất cả</option>
+              <option value="Not Started">Chưa bắt đầu</option>
+              <option value="In Progress">Đang làm</option>
+              <option value="Completed">Hoàn thành</option>
+              <option value="Cancel">Cancel</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="list-filter-priority">Mức độ:</label>
+            <select id="list-filter-priority" onchange="renderListView()">
+              <option value="">Tất cả</option>
+              <option value="Urgent">Khẩn cấp</option>
+              <option value="High">Cao</option>
+              <option value="Normal">Thường</option>
+              <option value="Low">Thấp</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="list-filter-category">Loại:</label>
+            <select id="list-filter-category" onchange="renderListView()">
+              <option value="">Tất cả</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="list-filter-start">Hạn chót từ:</label>
+            <input type="date" id="list-filter-start" onchange="renderListView()">
+          </div>
+          <div class="filter-group">
+            <label for="list-filter-end">Đến:</label>
+            <input type="date" id="list-filter-end" onchange="renderListView()">
+          </div>
+          <div class="filter-group">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 500;">
+              <input type="checkbox" id="list-filter-no-date" checked onchange="renderListView()" style="width: 16px; height: 16px; cursor: pointer;">
+              Hiện việc không có hạn chót
+            </label>
+          </div>
+          <div class="filter-group">
+            <button class="btn btn-secondary" onclick="clearListFilters()">
+              <i class="fas fa-times"></i> Xóa lọc
+            </button>
+          </div>
+        </div>
+
+        <div class="list-table-wrapper">
+          <table class="task-list-table">
+            <thead>
+              <tr>
+                <th>Công việc</th>
+                <th>Trạng thái</th>
+                <th>Mức độ</th>
+                <th>Loại</th>
+                <th>Hạn chót</th>
+                <th>Việc con</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="task-list-body">
+              <!-- Task rows will be rendered here -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1875,6 +2067,7 @@
       document.getElementById('clear-search-btn').classList.toggle('show', searchQuery.length > 0);
       renderKanban();
       renderCalendar();
+      renderListView();
     }
 
     function clearSearch() {
@@ -1884,6 +2077,7 @@
       document.getElementById('clear-search-btn').classList.remove('show');
       renderKanban();
       renderCalendar();
+      renderListView();
     }
 
     // UI Loading Indicator
@@ -1899,6 +2093,7 @@
       setDefaultDateRange();
       renderCalendar();
       renderKanban();
+      renderListView();
       updateNotificationStatusUI();
       await refreshData();
       checkClientReminders();
@@ -1938,6 +2133,7 @@
         .then(data => {
           subtasks = Array.isArray(data) ? data : [];
           renderKanban();
+          renderListView();
           return subtasks;
         })
         .catch(err => {
@@ -1970,6 +2166,7 @@
               tasks = Array.isArray(data) ? data : [];
               renderCalendar();
               renderKanban();
+              renderListView();
               checkOverdue();
               showLoading(false);
               resolve(tasks);
@@ -1987,6 +2184,7 @@
               tasks = data;
               renderCalendar();
               renderKanban();
+              renderListView();
               checkOverdue();
               showLoading(false);
               resolve(tasks);
@@ -2029,13 +2227,15 @@
     // Update category dropdown selects
     function updateCategorySelects() {
       const kanbanFilter = document.getElementById('kanban-filter-category');
+      const listFilter = document.getElementById('list-filter-category');
       const taskCategory = document.getElementById('task-category');
-      
-      const options = categories.map(cat => 
+
+      const options = categories.map(cat =>
         `<option value="${escapeHtml(cat.value)}">${escapeHtml(cat.label)}</option>`
       ).join('');
-      
+
       kanbanFilter.innerHTML = '<option value="">Tất cả</option>' + options;
+      if (listFilter) listFilter.innerHTML = '<option value="">Tất cả</option>' + options;
       taskCategory.innerHTML = '<option value="">Chọn loại</option>' + options;
     }
 
@@ -2058,6 +2258,8 @@
         renderCalendar();
       } else if (tab === 'kanban') {
         renderKanban();
+      } else if (tab === 'list') {
+        renderListView();
       } else if (tab === 'statistics') {
         loadStatistics();
       }
@@ -2311,8 +2513,9 @@
         task.status = newStatus;
         renderKanban();
         renderCalendar();
+        renderListView();
         checkOverdue();
-        
+
         try {
           await updateTask(taskId, { status: newStatus });
           showToast('Cập nhật trạng thái thành công!', 'success');
@@ -2320,6 +2523,7 @@
           task.status = oldStatus;
           renderKanban();
           renderCalendar();
+          renderListView();
           showToast('Lỗi cập nhật: ' + (err.message || err), 'error');
         }
       }
@@ -2341,8 +2545,9 @@
         task.dueDate = targetDateStr;
         renderCalendar();
         renderKanban();
+        renderListView();
         checkOverdue();
-        
+
         try {
           await updateTask(taskId, { dueDate: targetDateStr });
           showToast('Đã dời hạn chót sang ' + formatDate(targetDateStr) + '!', 'success');
@@ -2350,6 +2555,7 @@
           task.dueDate = oldDueDate;
           renderCalendar();
           renderKanban();
+          renderListView();
           showToast('Lỗi cập nhật hạn chót: ' + (err.message || err), 'error');
         }
       }
@@ -3002,6 +3208,114 @@
     function getCategoryColor(category) {
       const cat = categories.find(c => c.value === category);
       return cat ? cat.color : '#3498db';
+    }
+
+    function getStatusColor(status) {
+      const colors = {
+        'Not Started': '#9b59b6',
+        'In Progress': '#f39c12',
+        'Completed': '#2ecc71',
+        'Cancel': '#95a5a6'
+      };
+      return colors[status] || '#3498db';
+    }
+
+    function getStatusLabel(status) {
+      const labels = {
+        'Not Started': 'Chưa bắt đầu',
+        'In Progress': 'Đang làm',
+        'Completed': 'Hoàn thành',
+        'Cancel': 'Cancel'
+      };
+      return labels[status] || status || 'Chưa bắt đầu';
+    }
+
+    // List View: flat, filterable table of all tasks (unlike Calendar, tasks without a due date are still shown)
+    function renderListView() {
+      const tbody = document.getElementById('task-list-body');
+      if (!tbody) return;
+
+      const filterStatus = document.getElementById('list-filter-status').value;
+      const filterPriority = document.getElementById('list-filter-priority').value;
+      const filterCategory = document.getElementById('list-filter-category').value;
+      const startDate = document.getElementById('list-filter-start').value;
+      const endDate = document.getElementById('list-filter-end').value;
+      const showNoDate = document.getElementById('list-filter-no-date').checked;
+      const todayStr = getTodayDateStr();
+
+      let filtered = tasks.filter(task => {
+        if (filterStatus && task.status !== filterStatus) return false;
+        if (filterPriority && task.priority !== filterPriority) return false;
+        if (filterCategory && task.category !== filterCategory) return false;
+        if (!matchesSearch(task)) return false;
+
+        const dueStr = getTaskDueDateStr(task.dueDate);
+        if (!dueStr) return showNoDate;
+        if (startDate && dueStr < startDate) return false;
+        if (endDate && dueStr > endDate) return false;
+        return true;
+      });
+
+      // Sort by due date ascending; tasks without a due date sink to the bottom
+      filtered.sort((a, b) => {
+        const da = getTaskDueDateStr(a.dueDate);
+        const db = getTaskDueDateStr(b.dueDate);
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return da.localeCompare(db);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr class="list-empty-row">
+            <td colspan="7">
+              <i class="fas fa-inbox" style="font-size: 2em; display: block; margin-bottom: 10px;"></i>
+              Không có công việc nào khớp với bộ lọc.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(task => {
+        const dueStr = getTaskDueDateStr(task.dueDate);
+        const isOverdue = dueStr && dueStr < todayStr && task.status !== 'Completed' && task.status !== 'Cancel';
+        const counts = getSubtaskCounts(task.id);
+        const subtaskCell = counts.total > 0
+          ? `<span class="subtask-badge ${counts.completed === counts.total ? 'all-done' : ''}"><i class="fas fa-list-check"></i> ${counts.completed}/${counts.total}</span>`
+          : '<span style="color: #cbd5e0;">-</span>';
+
+        return `
+          <tr class="${isOverdue ? 'overdue-row' : ''}">
+            <td>
+              <div class="task-title-cell" onclick="editTask('${task.id}')">${escapeHtml(task.title)}</div>
+              ${task.description ? `<div class="task-desc-preview">${escapeHtml(task.description)}</div>` : ''}
+            </td>
+            <td><span class="badge-pill" style="background: ${getStatusColor(task.status)};">${escapeHtml(getStatusLabel(task.status))}</span></td>
+            <td><span class="badge-pill" style="background: ${getPriorityColor(task.priority)};">${escapeHtml(task.priority || 'Normal')}</span></td>
+            <td>${escapeHtml(task.category || '-')}</td>
+            <td>${dueStr ? `<span class="${isOverdue ? 'due-overdue-text' : ''}">${formatDate(dueStr)}</span>` : '<span class="list-no-date">Không có hạn</span>'}</td>
+            <td>${subtaskCell}</td>
+            <td>
+              <div class="list-actions">
+                <button class="edit" onclick="editTask('${task.id}')" title="Sửa"><i class="fas fa-edit"></i></button>
+                <button class="delete" onclick="deleteTask('${task.id}')" title="Xóa"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function clearListFilters() {
+      document.getElementById('list-filter-status').value = '';
+      document.getElementById('list-filter-priority').value = '';
+      document.getElementById('list-filter-category').value = '';
+      document.getElementById('list-filter-start').value = '';
+      document.getElementById('list-filter-end').value = '';
+      document.getElementById('list-filter-no-date').checked = true;
+      renderListView();
     }
 
     function exportToExcel() {

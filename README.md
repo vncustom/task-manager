@@ -23,6 +23,13 @@ Một webapp quản lý công việc cá nhân sử dụng Google Apps Script v�
 - Hiển thị thông tin chi tiết trên mỗi thẻ
 - Sửa và xóa công việc trực tiếp
 
+### 📃 List View (Giao diện Danh sách)
+- Liệt kê toàn bộ công việc dạng bảng, kèm trạng thái, mức độ, loại và tiến độ công việc con
+- **Hiển thị cả công việc không có hạn chót** (khắc phục hạn chế của Calendar View, vốn chỉ hiển thị việc có ngày cụ thể)
+- Lọc theo trạng thái, mức độ, loại, khoảng ngày hạn chót
+- Tùy chọn ẩn/hiện công việc không có hạn chót
+- Sửa/xóa công việc trực tiếp từ danh sách
+
 ### 📊 Statistics View (Giao diện Thống kê)
 - Thống kê tổng quan: Tổng công việc, Hoàn thành, Đang làm, Chưa bắt đầu
 - Phân tích theo mức độ khẩn cấp (biểu đồ bar)
